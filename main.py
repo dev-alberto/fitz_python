@@ -18,8 +18,8 @@ if __name__ == '__main__':
     df = candlesticks_to_pd(rows)
 
     # DATA = np.array([3, 5, 10, 15, 20, 25], dtype=np.float64) 
+    print(pd.__version__)
     close = df['close'].to_numpy()
-
     print(len(close))
     ts_mean3 = ti.sma(close, period=3)
 
