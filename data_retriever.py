@@ -10,6 +10,25 @@ def Get_all_candles(cursor):
     cursor.execute("SELECT exchange, symbol, period, time, open, high, low, close, volume FROM candlesticks")    
     return cursor.fetchall()
 
+# data will be formated to match a list of dicts, where each dict is a row entry 
+def format_data(rows):
+    assert len(rows) > 0
+
+    res = []
+    for r in rows:
+        d = {}
+        d['exchange'] = r[0]
+        d['symbol'] = r[1]
+        d['period'] = r[2]
+        d['time'] = r[3]
+        d['open'] = r[4]
+        d['high'] = r[5]
+        d['low'] = r[6]
+        d['close'] = r[7]
+        d['volume'] = r[8]
+        res.append(d)
+
+    return res
 
 # input dates like YYYY-MM-DD-HH-MM-SS (for example 2019-7-16-17-0-0)
 def Get_candlesticks_between_dates(cursor, date1, date2, period, symbol, exchange):
@@ -30,4 +49,4 @@ def Get_candlesticks_between_dates(cursor, date1, date2, period, symbol, exchang
     qq += s1 + s2 + s3 + s4
 
     cursor.execute(qq)
-    return cursor.fetchall()
+    return format_data(cursor.fetchall())
