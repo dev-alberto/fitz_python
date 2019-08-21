@@ -33,6 +33,14 @@ class RawDataManager:
             r[k] = np.array(v)
 
         return r
+    
+    def get_live_df(self):
+        dd = self.get_live_data()
+        return pd.DataFrame.from_dict(dd)
+
+    def get_backfill_df(self):
+        dd = self.get_backfill_data()
+        return pd.DataFrame.from_dict(dd)
 
     def get_backfill_data(self):
         return self.backfill_data.get_data()

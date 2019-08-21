@@ -1,5 +1,6 @@
 from raw_data_manager import RawDataManager
 from feature.sma import Sma
+from feature.vwap import Vwap
 
 
 class Instance:
@@ -9,7 +10,7 @@ class Instance:
         
         self.raw_data_managers = {}
 
-        self.sma_test = None
+        #self.feature_test = None
     
     def set_instance(self, instance):
         self.instance = instance
@@ -28,7 +29,7 @@ class Instance:
 
                 # don't forget to not actually hardcode the 256 lookback
                 self.raw_data_managers[key] = RawDataManager(exchange, ss, period, 256, history)
-    
+
     # backfill and update should probably be handled by a different object, good enough impl for now
     def backfill(self, exchange, symbol, period, data):
         key = exchange + symbol + period
@@ -36,23 +37,26 @@ class Instance:
         if self.raw_data_managers.get(key) != None:
             self.raw_data_managers[key].backfill(data)
         
-        self.sma_test =Sma(100, 20, self.raw_data_managers['binanceBTCUSDT1m'])
+       # self.feature_test =Vwap(20, 5, self.raw_data_managers['binanceBTCUSDT1m'])
         
-        self.sma_test.backfill()
+       #self.feature_test.backfill()
         
         #print('feature backfill... ')
-        ff = self.sma_test.get_feature()
+       # ff = self.feature_test.get_feature()
         #print(len(ff))
-        print(ff[-1:])
+       # print(ff[-1:])
 
     def update(self, exchange, symbol, period, data):
         key = exchange + symbol + period
         if self.raw_data_managers.get(key) != None:
             self.raw_data_managers[key].update(data)
 
-        self.sma_test.update()
+        #self.feature_test.update()
         
-        print('feature update... ')
-        ff = self.sma_test.get_feature()
-        print(len(ff))
-        print(ff[-2:])
+        #print('feature update... ')
+        #ff = self.feature_test.get_feature()
+        #print(len(ff))
+        #print(ff[-2:])
+
+    def get_raw_data_managers(self):
+        return self.raw_data_managers

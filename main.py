@@ -40,26 +40,27 @@ def candlesticks_to_pd(rows):
 
 
 if __name__ == '__main__':
-    #iii = Instance()
-    #s = zerorpc.Server(RpcBridge(iii))
-    #s.bind("tcp://0.0.0.0:4242")
-    #s.run()
-
-
-    conn = Connect('fitz.db')
-    cur = conn.cursor()
-
-    symbol = 'BTCUSDT'
-    period = '1m'
-    exchange = 'binance'
-
-    data = Get_candlesticks_between_dates(cur, "2019-7-12-17-0-0", "2019-7-16-18-0-0", period,symbol,exchange)
     
-    js = {'symbols': [{'symbol': symbol, 'periods': ['1m'], 'exchange': 'binance', 'state': 'watch', 'history': len(data),'strategies': []}]}
+    iii = Instance()
+    s = zerorpc.Server(RpcBridge(iii))
+    s.bind("tcp://0.0.0.0:4242")
+    s.run()
 
-    ii = Instance()
+
+    #conn = Connect('fitz.db')
+    #cur = conn.cursor()
+
+    #symbol = 'BTCUSDT'
+    #period = '1m'
+    #exchange = 'binance'
+
+    #data = Get_candlesticks_between_dates(cur, "2019-7-12-17-0-0", "2019-7-16-18-0-0", period,symbol,exchange)
     
-    db_bridge = DbBridge(ii)
-    db_bridge.instantiate(js)
+    #js = {'symbols': [{'symbol': symbol, 'periods': ['1m'], 'exchange': 'binance', 'state': 'watch', 'history': len(data),'strategies': []}]}
 
-    db_bridge.backfill(exchange, symbol, period, data) 
+    #ii = Instance()
+    
+    #db_bridge = DbBridge(ii)
+    #db_bridge.instantiate(js)
+
+    #db_bridge.backfill(exchange, symbol, period, data) 
