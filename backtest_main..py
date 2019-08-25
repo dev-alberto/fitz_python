@@ -4,7 +4,11 @@ from rpc.db_bridge import DbBridge
 from instance import Instance
 
 from strategy.random import RandomBTCUSDT
+from strategy.simple_reversion import Min_Max_Normalized_Returns_Reversion
 from strategy.backtest import Backtest
+
+from feature.mean_returns import MeanReturns
+from feature.returns import Returns
 
 from data_retriever import Get_all_candles, Get_candlesticks_between_dates
 
@@ -31,9 +35,25 @@ if __name__ == '__main__':
 
     raw_data_managers = ii.get_raw_data_managers()
 
-    oha = RandomBTCUSDT(raw_data_managers['binanceBTCUSDT1m'])
+    btc1min = raw_data_managers['binanceBTCUSDT1m']
+
+    r = Returns(5800, btc1min)
+
+    r.backfill()
+
+    mean_r = MeanReturns(5, btc1min, r)
+
+    mean_r.backfill()
+
+    # oha = RandomBTCUSDT(raw_data_managers['binanceBTCUSDT1m'])
+
+    mean_s = Min_Max_Normalized_Returns_Reversion(mean_r, btc1min)
 
 
-    backtest = Backtest(raw_data_managers['binanceBTCUSDT1m'], oha, 0.075)
+    backtest = Backtest('2019-7-12-17-0-0', mean_s, 0.075)
 
-    backtest.compute_pnl()
+    ll = backtest.compute_pnl()
+
+    print(sum(ll['returns']))
+
+    print(ll.head(10))

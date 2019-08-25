@@ -25,6 +25,8 @@ class RawDataManager:
 
         self.backfill_data = Raw()
 
+        self.live_candle = None
+
     # returns a dict of raw data {'close':[], 'open':[] etc}, where arrays are numpy,
     # this is the format that is exposed,  for feature creation
     def get_live_data(self):
@@ -38,6 +40,7 @@ class RawDataManager:
         dd = self.get_live_data()
         return pd.DataFrame.from_dict(dd)
 
+    # maybe they should be time indexed df's? 
     def get_backfill_df(self):
         dd = self.get_backfill_data()
         return pd.DataFrame.from_dict(dd)
@@ -105,6 +108,8 @@ class RawDataManager:
     def update(self, data):
         candle = data[0]
 
+        self.live_candle = candle
+
         self.live_data.update_time(get_datetime_from_miliseconds(candle.get('time')))
         self.live_data.update_open(candle.get('open'))
         self.live_data.update_high(candle.get('high'))
@@ -118,8 +123,21 @@ class RawDataManager:
         print("Live candle time: ")
         print(tt)
 
+    def sava_backfill_to_disk(self,path):
+        df = self.get_backfill_df()
+        df.to_csv(path) 
+
     def get_lookback(self):
         return self.lookback
 
     def get_history(self):
         return self.history
+
+    def get_period(self):
+        return self.period
+
+    def get_symbol(self):
+        return self.symbol
+
+    def get_live_candle(self):
+        return self.live_candle

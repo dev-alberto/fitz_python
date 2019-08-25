@@ -1,3 +1,5 @@
+import numpy as np
+
 from db_connect import Connect
 from rpc.rpc_bridge import RpcBridge
 from rpc.db_bridge import DbBridge
@@ -5,6 +7,7 @@ from instance import Instance
 
 from feature.vwap import Vwap
 from feature.returns import Returns
+from feature.mean_returns import MeanReturns
 
 from data_retriever import Get_all_candles, Get_candlesticks_between_dates
 
@@ -33,12 +36,20 @@ if __name__ == '__main__':
 
     btc1min = raw_data_managers['binanceBTCUSDT1m']
 
+    btc1min.sava_backfill_to_disk('data_test/file1.csv')
+
     r = Returns(20, btc1min)
 
     r.backfill()
 
-    returns = r.get_feature()
+    r.save_DF()
 
-    print(returns)
+    #mean_r = MeanReturns(5, btc1min, r)
 
-    
+    #mean_r.backfill()
+
+    #ff = mean_r.get_feature()
+
+    #print(min(ff))
+
+    #print(max(ff))

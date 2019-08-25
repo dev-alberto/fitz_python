@@ -5,6 +5,13 @@ def get_unix_time_miliseconds(yy, MM, dd, hh, mm, ss):
     dt = datetime(yy, MM, dd, hour=hh, minute=mm, second=ss).replace(tzinfo=timezone.utc)
     return int(time.mktime(dt.timetuple())*1e3 + dt.microsecond/1e3)
 
+def Parse_string_date(date):
+    d = date.split('-')
+    
+    assert len(d) == 6
+
+    return datetime(int(d[0]), int(d[1]), int(d[2]), int(d[3]), int(d[4]), int(d[5]))
+
 
 def Get_all_candles(cursor):
     cursor.execute("SELECT exchange, symbol, period, time, open, high, low, close, volume FROM candlesticks")    

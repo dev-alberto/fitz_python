@@ -1,39 +1,56 @@
 import pandas as pd
+from data_retriever import Parse_string_date
+from strategy.strategy import AbstractStrategy
 
 class Backtest:
 
-    def __init__(self, raw_data_manager, strategy, cost):
+    def __init__(self, start_time, strategy, cost):
+        assert isinstance(strategy, AbstractStrategy)
+
         self.strategy = strategy
         self.cost = cost
-        # self.initial_allocation = initial_allocation
-        self.raw_data_manager = raw_data_manager
-    
+        self.start_time = Parse_string_date(start_time)
+
+        strategy_min_time = strategy.get_earliest_start_time()
+        if strategy_min_time > self.start_time:
+            self.start_time = strategy_min_time
+
     def compute_pnl(self):
-        data = self.raw_data_manager.get_backfill_df()
-        start_position = self.strategy.get_current()
+        
+        data = self.strategy.get_main_data_manager().get_backfill_df()
     
-        data = data[(data['time'] >= start_position['ts'])]
+        data = data[(data['time'] >= self.start_time)]
 
+        assert (len(data)) > 0
 
-        data.index = pd.RangeIndex(len(data.index))
-        print(data.head(5))
-        print(data.loc[0, 'close'])
+        data.set_index('time',inplace=True)
+
+        #data.index = pd.RangeIndex(len(data.index))
+        #print(data.head(5))
+        #print(data.loc[0, 'close'])
 
         returns = []
 
+        allocs = []
+
+        prev = None
+
         for index, row in data.iterrows():
-            position = self.strategy.compute()
-            alloc = position['allocation']            
+            alloc = self.strategy.compute(index)
+            allocs.append(alloc)
             if len(returns) == 0:
                 returns.append(0)
+                prev = row['close']
                 continue
-            val = alloc * (row['close'] - data.loc[index-1, 'close'])
+            val = alloc * (row['close'] - prev)
             returns.append(val)
+
+            prev = row['close']
 
         
         #data['portfolio'] = portfolio
         data['returns'] = returns
-
+        data['allocs'] = allocs
         return data
 
             
