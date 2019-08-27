@@ -1,13 +1,16 @@
 from feature.feature import EmptyFeature
 import tulipy as ti
 
-class Sma(EmptyFeature):
+class BollingerLow(EmptyFeature):
 
-    def __init__(self,lookback, raw_data_manager, history_lengh=None):
+    def __init__(self, lookback, std,  raw_data_manager, history_lengh=None):
         super().__init__(lookback, raw_data_manager,history_lengh=history_lengh)
+
+        self.std = std
 
 
     def compute(self, data_dict):
         
         close = data_dict.get('close')
-        return ti.sma(close, self.lookback)
+
+        return ti.bbands(close, self.lookback, self.std)[0]

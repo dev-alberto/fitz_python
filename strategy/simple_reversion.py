@@ -9,10 +9,10 @@ class Min_Max_Normalized_Returns_Reversion(AbstractStrategy):
         assert isinstance(mean_r, MeanReturns)
         super().__init__(initial_allocation=1, pair='BTCUSDT', period='1m', raw_data_managers=[raw_data_manager], feature_list=[mean_r], model=None)
 
-        self.mean_r_feature = mean_r.get_DF()
+        self.mean_r_feature = mean_r.get_TS()
 
-        self.min = self.mean_r_feature['MeanReturns'].min()
-        self.max = self.mean_r_feature['MeanReturns'].max()
+        self.min = self.mean_r_feature.min()
+        self.max = self.mean_r_feature.max()
 
         #print(self.min)
 
@@ -20,7 +20,7 @@ class Min_Max_Normalized_Returns_Reversion(AbstractStrategy):
 
     def compute(self, ii):
         
-        val = self.mean_r_feature.loc[ii, 'MeanReturns']
+        val = self.mean_r_feature[ii]
 
         if val > self.max:
             self.max = val

@@ -1,34 +1,44 @@
 from numpy_ringbuffer import RingBuffer
 import numpy as np
 
-# I would not add symbol, exchange here, not even period, 
-# even tough they are clearly needed, I would to this one layer up..
-
 # should be an abstract class, all features will inherit from this.
 # raw_data_manager contains the symbol, period data, so no need to add to constructor  
 # there will probably be a "master" type class that supervises all features, saves to disk and 
 # keeps a DF record
 class EmptyFeature:
     
-    def __init__(self, history_lengh, lookback, raw_data_manager, features=None):
-        self.history_lengh = history_lengh
+    def __init__(self, lookback, raw_data_manager, history_lengh=None, features=None):
+        raw_data_length = raw_data_manager.get_history()
+
+        # kind of spaghetii logic here to for feature history length but the gist is this:
+        # one may specify history length when instantiating or we can produce the maximum length given the data available
+        feath = 0
+        hh = raw_data_length
+
+        if features is not None:
+            feath = min([f.get_history_length() for f in features]) 
+            hh = feath
+
+        if history_lengh is None:
+            self.history_lengh = hh - lookback + 1
+        else:
+            self.history_lengh = history_lengh
+            
         self.lookback = lookback
         self.raw_data_manager = raw_data_manager
 
-        raw_data_length = raw_data_manager.get_history()
-
         # raw data must be able to fill history
-        assert (history_lengh + lookback - 1) <= raw_data_length
+        assert (self.history_lengh + lookback - 1) <= raw_data_length
         assert lookback <= raw_data_manager.get_lookback()
 
-        self.feature = RingBuffer(capacity=history_lengh, dtype=np.float64)
+        self.feature = RingBuffer(capacity=self.history_lengh, dtype=np.float64)
 
         # a feature may contain multiple features
         self.features = features
 
         self.feature_df = raw_data_manager.get_backfill_df()
         # trim df in place
-        drop_i = raw_data_length - history_lengh
+        drop_i = raw_data_length - self.history_lengh
         self.feature_df.drop(self.feature_df.index[:drop_i], inplace=True)
         self.feature_df.drop(columns=['volume', 'low', 'high'],inplace=True)
         self.feature_df.set_index('time',inplace=True)
@@ -49,6 +59,9 @@ class EmptyFeature:
     def backfill(self):
         data = self.raw_data_manager.get_backfill_data()
         ff = self.compute(data)[-self.history_lengh:]
+        
+        print(len(ff))
+        print(self.history_lengh)
         
         assert len(ff) == self.history_lengh
 
@@ -78,6 +91,9 @@ class EmptyFeature:
     # this should return a time indexed df containing feature values; maybe makes this a pandas series... 
     def get_DF(self):
         return self.feature_df
+
+    def get_TS(self):
+        return self.feature_df[type(self).__name__]
 
     def save_DF(self):
         name = type(self).__name__ + '.csv'

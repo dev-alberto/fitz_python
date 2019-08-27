@@ -53,8 +53,6 @@ class Backtest:
         data['allocs'] = allocs
         return data
 
-            
-
     def compute_cumulative_pnl(self):
         pass
     

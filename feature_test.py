@@ -36,13 +36,12 @@ if __name__ == '__main__':
 
     btc1min = raw_data_managers['binanceBTCUSDT1m']
 
-    btc1min.sava_backfill_to_disk('data_test/file1.csv')
-
-    r = Returns(20, btc1min)
+    r = Returns(btc1min,history_lengh=10)
 
     r.backfill()
 
-    r.save_DF()
+    print(r.get_TS())
+    #r.save_DF()
 
     #mean_r = MeanReturns(5, btc1min, r)
 

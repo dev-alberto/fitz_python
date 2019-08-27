@@ -3,8 +3,8 @@ import tulipy as ti
 
 class Vwap(EmptyFeature):
 
-    def __init__(self, history_lengh, lookback, raw_data_manager):
-        super().__init__(history_lengh, lookback, raw_data_manager)
+    def __init__(self, lookback, raw_data_manager, history_lengh=None):
+        super().__init__(lookback, raw_data_manager,history_lengh=history_lengh)
 
 
     def compute(self, data_dict):
