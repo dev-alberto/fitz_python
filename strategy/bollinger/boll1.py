@@ -12,4 +12,3 @@ class BollingerImpl1(BollingerS):
     def compute(self, ii):
         val = - self.cross_cbl[ii] + self.cross_bhc[ii]
         return super().compute(ii, val)
-        

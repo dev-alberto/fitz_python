@@ -1,6 +1,7 @@
 import pandas as pd
 from data_retriever import Parse_string_date
 from strategy.strategy import AbstractStrategy
+from feature.feature import EmptyFeature
 
 class Backtest:
 
@@ -15,8 +16,8 @@ class Backtest:
         if strategy_min_time > self.start_time:
             self.start_time = strategy_min_time
 
-    def compute_pnl(self):
-        
+    def compute_pnl(self, save=True):
+         
         data = self.strategy.get_main_data_manager().get_backfill_df()
     
         data = data[(data['time'] >= self.start_time)]

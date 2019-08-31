@@ -7,7 +7,7 @@ import numpy as np
 # keeps a DF record
 class EmptyFeature:
     
-    def __init__(self, lookback, raw_data_manager, history_lengh=None, features=None):
+    def __init__(self, lookback, raw_data_manager, backfill=True, history_lengh=None, features=None):
         raw_data_length = raw_data_manager.get_history()
 
         # kind of spaghetii logic here to for feature history length but the gist is this:
@@ -42,6 +42,9 @@ class EmptyFeature:
         self.feature_df.drop(self.feature_df.index[:drop_i], inplace=True)
         self.feature_df.drop(columns=['volume', 'low', 'high'],inplace=True)
         self.feature_df.set_index('time',inplace=True)
+
+        if self.backfill:
+            self.backfill()
 
 
     def get_feature(self):

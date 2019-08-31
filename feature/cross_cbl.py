@@ -6,9 +6,8 @@ class Cross_cBL(EmptyFeature):
 
     def __init__(self, bollingerL, raw_data_manager,history_l=None):
         assert isinstance(bollingerL, BollingerLow)
-        super().__init__(2, raw_data_manager, features=[bollingerL],history_lengh=history_l)
-
         self.boll = bollingerL
+        super().__init__(2, raw_data_manager, features=[bollingerL],history_lengh=history_l)
 
     def compute(self, data_dict):
 
