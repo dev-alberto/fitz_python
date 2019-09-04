@@ -2,11 +2,14 @@ from raw_data_manager import RawDataManager
 
 class AbstractStrategy:
 
-    def __init__(self, initial_allocation, pair, period, raw_data_managers, feature_list=None, model=None):
+    def __init__(self, initial_allocation, pair, period, raw_data_managers, is_live=False, feature_list=None, model=None):
         self.pair = pair
         self.period = period
         self.model = model
         self.feature_list = feature_list
+        self.is_live = is_live
+
+        self.pnl = 0
 
         assert len(raw_data_managers) > 0
 
@@ -33,7 +36,6 @@ class AbstractStrategy:
         # self.time_data = self.main_data_manager.get_backfill_data().get('time')
         
         # prediction format 
-        # self.current_prediction = {'allocation':initial_allocation, 'ts':self.time_data[self.index]}
         self.allocation = initial_allocation
 
     # override dis ... 

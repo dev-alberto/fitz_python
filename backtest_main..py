@@ -16,7 +16,7 @@ from feature.cross_bhc import Cross_BHc
 from feature.bollinger_low import BollingerLow
 from feature.bollinger_high import BollingerHigh
 
-from data_retriever import Get_all_candles, Get_candlesticks_between_dates
+from data_retriever import *
 
 import matplotlib
 import matplotlib.pyplot as plt
@@ -41,12 +41,12 @@ if __name__ == '__main__':
     period = '1m'
     exchange = 'binance'
 
-    data = Get_candlesticks_between_dates(cur, "2019-7-12-17-0-0", "2019-7-16-18-0-0", period,symbol,exchange)
+    #data = Get_candlesticks_between_dates(cur, "2019-7-12-17-0-0", "2019-7-16-18-0-0", period,symbol,exchange)
+    data = Get_all_candlesticks_with_period(cur, period,symbol,exchange)
     
     js = {'symbols': [{'symbol': symbol, 'periods': ['1m'], 'exchange': 'binance', 'state': 'watch', 'history': len(data),'strategies': []}]}
 
     ii = Instance()
-    #matplotlib.use('TkAgg')
     
     db_bridge = DbBridge(ii)
     db_bridge.instantiate(js)
@@ -67,16 +67,9 @@ if __name__ == '__main__':
 
     boll1 = BollingerImpl1(cross_cbl, cross_bhc, btc1min)
 
-    backtest = Backtest('2019-7-12-17-0-0',boll1, 0.075)
+    backtest = Backtest(boll1, 0.075)
 
-    ll = backtest.compute_pnl()
+    backtest.plot_pnl()
 
-    ret = pd.Series(data = ll['returns'], index = ll.index)
-
-    hh = ret.resample('60T').sum()
-
-    cum = hh.cumsum()
-
-    cum.plot()
-    plt.show()
+    #backtest.save_to_disk()
 

@@ -32,6 +32,7 @@ class EmptyFeature:
         assert lookback <= raw_data_manager.get_lookback()
 
         self.feature = RingBuffer(capacity=self.history_lengh, dtype=np.float64)
+        self.latest = None
 
         # a feature may contain multiple features
         self.features = features
@@ -86,7 +87,8 @@ class EmptyFeature:
         new_val = self.compute(data)[-1:]
 
         candle[type(self).__name__] = new_val
-
+        
+        self.latest = new_val
         self.feature.append(new_val)
 
         self.feature_df.append(candle)
@@ -97,6 +99,9 @@ class EmptyFeature:
 
     def get_TS(self):
         return self.feature_df[type(self).__name__]
+
+    def get_latest(self):
+        return self.latest
 
     def save_DF(self):
         name = type(self).__name__ + '.csv'

@@ -6,7 +6,8 @@ from strategy.strategy import AbstractStrategy
 
 class BollingerS(AbstractStrategy):
 
-    def __init__(self, raw_data_manager, cross_cbl=None, cross_blc=None, cross_cbm=None, cross_bmc=None,cross_cbh=None, cross_bhc=None):
+    def __init__(self, raw_data_manager, cross_cbl=None, cross_blc=None, cross_cbm=None, 
+    cross_bmc=None,cross_cbh=None, cross_bhc=None, is_live=False):
         
         f_list = []
 
@@ -29,7 +30,7 @@ class BollingerS(AbstractStrategy):
             f_list.append(cross_bhc)
         
         super().__init__(initial_allocation=0, pair='BTCUSDT', period='1m', raw_data_managers=[raw_data_manager], 
-                        feature_list=f_list, model=None)
+                        feature_list=f_list, model=None,is_live=is_live)
 
     def compute(self, ii, feature_val):
         if feature_val == 1:
@@ -38,6 +39,18 @@ class BollingerS(AbstractStrategy):
             self.allocation = 0
         
         return self.allocation
-
+       
+       # if self.allocation < 1:
+       #     if feature_val > 0:
+       #         feature_val = 1
+       #     else: feature_val = 0
         
+       # if self.allocation == 1:
+       #     if feature_val < 0:
+       #         feature_val = 0
+       #     else: feature_val = 1
+        
+       # self.allocation = feature_val
+      #  return self.allocation
+       
         

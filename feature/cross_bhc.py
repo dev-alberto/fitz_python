@@ -9,7 +9,7 @@ class Cross_BHc(EmptyFeature):
         assert isinstance(bollingerH, BollingerHigh)
         self.boll = bollingerH
 
-        super().__init__(2, raw_data_manager, features=[bollingerH],history_lengh=history_l)
+        super().__init__(2, raw_data_manager, features=[bollingerH])
 
     def compute(self, data_dict):
 

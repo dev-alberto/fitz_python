@@ -12,6 +12,9 @@ def Parse_string_date(date):
 
     return datetime(int(d[0]), int(d[1]), int(d[2]), int(d[3]), int(d[4]), int(d[5]))
 
+def Get_datetime_from_miliseconds(ms):
+    return datetime.utcfromtimestamp(ms//1000).replace(microsecond=ms%1000*1000)
+
 
 def Get_all_candles(cursor):
     cursor.execute("SELECT exchange, symbol, period, time, open, high, low, close, volume FROM candlesticks")    
@@ -54,6 +57,17 @@ def Get_candlesticks_between_dates(cursor, date1, date2, period, symbol, exchang
 
     s4 = " time between " + str(u_d1) + " and " + str(u_d2)
     qq += s1 + s2 + s3 + s4
+
+    cursor.execute(qq)
+    return format_data(cursor.fetchall())
+
+def Get_all_candlesticks_with_period(cursor, period, symbol, exchange):
+    qq = "select exchange, symbol, period, time, open, high, low, close, volume FROM candlesticks where "
+    s1 = " exchange='" + exchange  + "' and "
+    s2 = " symbol='" + symbol + "' and "
+    s3  = " period='" + period + "' "
+
+    qq += s1 + s2 + s3
 
     cursor.execute(qq)
     return format_data(cursor.fetchall())
