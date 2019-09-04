@@ -1,17 +1,18 @@
 from rpc.bridge_interface import IBridge
-
+from instance import Instance
 
 # there should probably be an interface for this, to achieve dependecy inversion.
 # Testing features without needing to connect to the node JS portion should be possible
 class DbBridge(IBridge):
 
     def __init__(self, instance_obj):
+        assert isinstance(instance_obj, Instance)
         self.instance_obj = instance_obj
 
     def instantiate(self, instance):
         self.instance_obj.set_instance(instance)
 
-        self.instance_obj.create_raw_data_managers()
+        self.instance_obj.create_tickers_and_raw_data_managers()
 
         print('Ok, I have instantiated')
 

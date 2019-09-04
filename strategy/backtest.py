@@ -48,9 +48,9 @@ class Backtest:
             returns.append(val)
 
         
-        #data['portfolio'] = portfolio
         data['returns'] = returns
         data['allocs'] = allocs
+
         return data
 
     def plot_pnl(self, period='60T'):

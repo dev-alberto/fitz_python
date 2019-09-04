@@ -35,7 +35,6 @@ class AbstractStrategy:
 
         # self.time_data = self.main_data_manager.get_backfill_data().get('time')
         
-        # prediction format 
         self.allocation = initial_allocation
 
     # override dis ... 
@@ -56,3 +55,9 @@ class AbstractStrategy:
             dates.append(dd.index[0])
         
         return max(dates)
+
+    def __eq__(self, other_strategy):
+        return isinstance(other_strategy, AbstractStrategy) and type(self).__name__ == type(other_strategy).__name__
+
+    def __hash__(self):
+        return hash(str(self))

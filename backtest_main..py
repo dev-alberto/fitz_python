@@ -71,5 +71,5 @@ if __name__ == '__main__':
 
     backtest.plot_pnl()
 
-    #backtest.save_to_disk()
+    backtest.save_to_disk()
 
