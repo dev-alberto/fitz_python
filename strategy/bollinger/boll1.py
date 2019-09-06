@@ -18,6 +18,6 @@ class BollingerImpl1(BollingerS):
         if self.is_live:
             val = self.cross_cbl.get_latest() - self.cross_bhc.get_latest()
 
-        else: val = self.cross_cbl_ts[ii] - self.cross_bhc_ts[ii]
+        else: val = -self.cross_cbl_ts[ii] + self.cross_bhc_ts[ii]
 
         return super().compute(ii, val)

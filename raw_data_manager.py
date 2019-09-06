@@ -43,7 +43,9 @@ class RawDataManager:
     # maybe they should be time indexed df's? 
     def get_backfill_df(self):
         dd = self.get_backfill_data()
-        return pd.DataFrame.from_dict(dd)
+        df = pd.DataFrame.from_dict(dd)
+        df.set_index('time', inplace=True)
+        return df
 
     def get_backfill_data(self):
         return self.backfill_data.get_data()

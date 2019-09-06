@@ -26,24 +26,31 @@ class Backtest:
          
         data = self.strategy.get_main_data_manager().get_backfill_df()
     
-        data = data[(data['time'] >= self.start_time)]
+        data = data[(data.index >= self.start_time)]
 
         assert (len(data)) > 0
 
-        data.set_index('time',inplace=True)
+        #data.set_index('time',inplace=True)
 
         returns = []
 
         allocs = []
+        
+        prev_alloc = 0
+        prevprev_alloc = 0
 
         for index, row in data.iterrows():
             alloc = self.strategy.compute(index)
 
             allocs.append(alloc)
 
-            cost = (self.cost/100.0) * alloc * row['open']
+            # prev alloc
+            cost = (self.cost/100.0) * abs(prev_alloc - prevprev_alloc) * row['open']
 
-            val = alloc * (row['close'] - row['open']) - cost
+            val = prev_alloc * (row['close'] - row['open'])  - cost
+
+            prevprev_alloc = prev_alloc
+            prev_alloc = alloc
             
             returns.append(val)
 
