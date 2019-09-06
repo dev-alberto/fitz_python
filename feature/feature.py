@@ -1,5 +1,6 @@
 from numpy_ringbuffer import RingBuffer
 import numpy as np
+import pandas as pd
 
 # should be an abstract class, all features will inherit from this.
 # raw_data_manager contains the symbol, period data, so no need to add to constructor  
@@ -38,10 +39,10 @@ class EmptyFeature:
         self.features = features
 
         self.feature_df = raw_data_manager.get_backfill_df()
-        # trim df in place
+        # trim df 
         drop_i = raw_data_length - self.history_lengh
-        self.feature_df.drop(self.feature_df.index[:drop_i], inplace=True)
-        self.feature_df.drop(columns=['volume', 'low', 'high'],inplace=True)
+        self.feature_df = self.feature_df.iloc[:-drop_i]
+        #self.feature_df.drop(columns=['volume', 'low', 'high'],inplace=True)
         self.feature_df.set_index('time',inplace=True)
 
         if self.backfill:
@@ -64,8 +65,8 @@ class EmptyFeature:
         data = self.raw_data_manager.get_backfill_data()
         ff = self.compute(data)[-self.history_lengh:]
         
-        print(len(ff))
-        print(self.history_lengh)
+        #print(len(ff))
+        #print(self.history_lengh)
         
         assert len(ff) == self.history_lengh
 
@@ -78,20 +79,20 @@ class EmptyFeature:
     def update(self):
         data = self.raw_data_manager.get_live_data()
 
+        new_val = self.compute(data)[-1]
+
         candle = self.raw_data_manager.get_live_candle()
 
-        candle.pop('volume', None)
-        candle.pop('low', None)
-        candle.pop('high', None)
+        to_append = {'time': candle.get('time'), 'open': candle.get('open'), 'low':candle.get('low'), 'close':candle.get('close'),'high':candle.get('high'),'volume':candle.get('volume'),type(self).__name__:new_val}
 
-        new_val = self.compute(data)[-1:]
-
-        candle[type(self).__name__] = new_val
+        #print(to_append)
+        #print(self.feature_df.head(5))
         
         self.latest = new_val
+
         self.feature.append(new_val)
 
-        self.feature_df.append(candle)
+        self.feature_df.append(pd.DataFrame(to_append,index=[to_append['time']]))
     
     # this should return a time indexed df containing feature values; maybe makes this a pandas series... 
     def get_DF(self):

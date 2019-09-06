@@ -3,7 +3,7 @@ from ticker import Ticker
 
 import time
 
-
+from strategy.bollinger_live import BollingerLive
 
 class Instance:
 
@@ -13,6 +13,8 @@ class Instance:
         self.raw_data_managers = {}
 
         self.tickers = {}
+
+        self.live_bollinger = None
     
     def set_instance(self, instance):
         self.instance = instance
@@ -45,6 +47,14 @@ class Instance:
         if self.raw_data_managers.get(key) != None:
             self.raw_data_managers[key].backfill(data)
         
+        # instatiate strategy here? Yeah.. Check which raw data managers have been backfilled first ... 
+
+        if key == 'binanceBTCUSDT1m':
+            ticker_key = exchange + symbol
+            assert ticker_key in self.tickers
+
+            self.live_bollinger = BollingerLive(1000, self.raw_data_managers[key], self.tickers[ticker_key])
+
 
     def update(self, exchange, symbol, period, data):
         key = exchange + symbol + period
@@ -52,6 +62,10 @@ class Instance:
         #print(data)
         if self.raw_data_managers.get(key) != None:
             self.raw_data_managers[key].update(data)
+
+        # for different strategies, will need to update proper strategies, depending on key
+        ii = self.raw_data_managers[key].get_live_candle().get('time')
+        return self.live_bollinger.generate_position(ii)
 
     def update_ticker(self, symbol, exchange, ticker):
         key = exchange + symbol

@@ -34,10 +34,10 @@ class RpcBridge(IBridge):
         
         assert len(data) == 1
 
-        self.instance_obj.update(exchange, symbol, period,  data)
+        pos1 = self.instance_obj.update(exchange, symbol, period,  data)
 
         # will probably return alloc
-        return 'Ok, I have updated'
+        return pos1
 
     def update_ticker(self, symbol, exchange, ticker):
         #print(ticker)

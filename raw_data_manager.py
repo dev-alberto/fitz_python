@@ -107,21 +107,18 @@ class RawDataManager:
 
     def update(self, data):
         candle = data[0]
+        tt = get_datetime_from_miliseconds(candle.get('time'))
+        candle['time'] = tt
 
         self.live_candle = candle
 
-        self.live_data.update_time(get_datetime_from_miliseconds(candle.get('time')))
+        self.live_data.update_time(candle.get('time'))
         self.live_data.update_open(candle.get('open'))
         self.live_data.update_high(candle.get('high'))
         self.live_data.update_low(candle.get('low'))
         self.live_data.update_close(candle.get('close'))
         self.live_data.update_volume(candle.get('volume'))
 
-
-        tt = self.live_data.get_data().get('time')[-1:]
-
-        print("Live candle time: ")
-        print(tt)
 
     def sava_backfill_to_disk(self,path):
         df = self.get_backfill_df()
