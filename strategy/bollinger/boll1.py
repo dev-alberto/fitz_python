@@ -21,6 +21,6 @@ class BollingerImpl1(BollingerS):
             bhc = self.cross_bhc.get_latest()
             val = - cbl + bhc
 
-        else: val = - self.cross_cbl_ts[ii] + self.cross_bhc_ts[ii]
+        else: val = -self.cross_cbl_ts[ii] + self.cross_bhc_ts[ii]
 
         return super().compute(ii, val)

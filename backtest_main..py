@@ -17,6 +17,7 @@ from feature.bollinger_low import BollingerLow
 from feature.bollinger_high import BollingerHigh
 
 from data_retriever import *
+from strategy.returns import Returns0
 
 import matplotlib
 import matplotlib.pyplot as plt
@@ -57,17 +58,10 @@ if __name__ == '__main__':
 
     btc1min = raw_data_managers['binanceBTCUSDT1m']
 
-    bl = BollingerLow(90, 3, btc1min)
 
-    bh = BollingerHigh(90, 3, btc1min)
-    
-    cross_cbl = Cross_cBL(bl, btc1min)
+    rets = Returns0(btc1min)
 
-    cross_bhc = Cross_BHc(bh, btc1min)
-
-    boll1 = BollingerImpl1(cross_cbl, cross_bhc, btc1min)
-
-    backtest = Backtest(boll1, 0.075)
+    backtest = Backtest(rets, 0.075)
 
     backtest.plot_pnl()
 
