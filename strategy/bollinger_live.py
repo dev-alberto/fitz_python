@@ -20,10 +20,11 @@ class BollingerLive(AbstractLiveStrategy):
 
         assert raw_data_manager.get_period() == '1m' and raw_data_manager.get_symbol() == 'BTCUSDT'
 
+
         bl = BollingerLow(90, 3, raw_data_manager)
 
         bh = BollingerHigh(90, 3, raw_data_manager)
-    
+
         cross_cbl = Cross_cBL(bl, raw_data_manager)
 
         cross_bhc = Cross_BHc(bh, raw_data_manager)

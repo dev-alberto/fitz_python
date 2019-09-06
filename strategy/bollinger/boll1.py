@@ -15,12 +15,11 @@ class BollingerImpl1(BollingerS):
     def compute(self, ii):
         #val = - self.cross_cbl[ii] + self.cross_bhc[ii]
         val = 0
-        print(ii)
         if self.is_live:
             cbl = self.cross_cbl.get_latest()
             bhc = self.cross_bhc.get_latest()
             val = - cbl + bhc
 
-        else: val = -self.cross_cbl_ts[ii] + self.cross_bhc_ts[ii]
+        else: val = - self.cross_cbl_ts[ii] + self.cross_bhc_ts[ii]
 
         return super().compute(ii, val)

@@ -33,24 +33,19 @@ class BollingerS(AbstractStrategy):
                         feature_list=f_list, model=None,is_live=is_live)
 
     def compute(self, ii, feature_val):
+        #if feature_val == 1:
+        #    self.allocation = 1
+        #else:
+        #    self.allocation = 0
+        
+        #return self.allocation
+       
         if feature_val == 1:
             self.allocation = 1
-        else:
+
+        elif feature_val == -1:
             self.allocation = 0
-        
+
         return self.allocation
-       
-       # if self.allocation < 1:
-       #     if feature_val > 0:
-       #         feature_val = 1
-       #     else: feature_val = 0
-        
-       # if self.allocation == 1:
-       #     if feature_val < 0:
-       #         feature_val = 0
-       #     else: feature_val = 1
-        
-       # self.allocation = feature_val
-      #  return self.allocation
        
         

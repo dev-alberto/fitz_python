@@ -26,6 +26,7 @@ class EmptyFeature:
             self.history_lengh = history_lengh
             
         self.lookback = lookback
+
         self.raw_data_manager = raw_data_manager
 
         # raw data must be able to fill history
@@ -39,11 +40,17 @@ class EmptyFeature:
         self.features = features
 
         self.feature_df = raw_data_manager.get_backfill_df()
-        # trim df 
-        drop_i = raw_data_length - self.history_lengh
-        self.feature_df = self.feature_df.iloc[:-drop_i]
+        # trim df
+        drop_i = self.lookback
+        if self.features is not None:
+            if len(self.features) > 0:       
+               drop_i = drop_i + max([f.get_lookback() for f in self.features]) -1
+
+        #print(drop_i)
+        self.feature_df = self.feature_df.iloc[(drop_i-1):]
+
         #self.feature_df.drop(columns=['volume', 'low', 'high'],inplace=True)
-        self.feature_df.set_index('time',inplace=True)
+        #self.feature_df.set_index('time',inplace=True)
 
         if self.backfill:
             self.backfill()
@@ -63,7 +70,7 @@ class EmptyFeature:
     # backfill history
     def backfill(self):
         data = self.raw_data_manager.get_backfill_data()
-        ff = self.compute(data)[-self.history_lengh:]
+        ff = self.compute(data)
         
         #print(len(ff))
         #print(self.history_lengh)
@@ -103,6 +110,9 @@ class EmptyFeature:
 
     def get_latest(self):
         return self.latest
+
+    def get_lookback(self):
+        return self.lookback
 
     def save_DF(self):
         name = type(self).__name__ + '.csv'

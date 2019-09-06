@@ -5,11 +5,12 @@ from rpc.rpc_bridge import RpcBridge
 from rpc.db_bridge import DbBridge
 from instance import Instance
 
-from feature.vwap import Vwap
-from feature.returns import Returns
-from feature.mean_returns import MeanReturns
+from raw_data_manager import RawDataManager
 
-from data_retriever import Get_all_candles, Get_candlesticks_between_dates
+
+from feature.LogReturns import LogReturns
+
+from data_retriever import *
 
 
 if __name__ == '__main__':
@@ -21,8 +22,8 @@ if __name__ == '__main__':
     period = '1m'
     exchange = 'binance'
 
-    data = Get_candlesticks_between_dates(cur, "2019-7-12-17-0-0", "2019-7-16-18-0-0", period,symbol,exchange)
-    
+    #data = Get_candlesticks_between_dates(cur, "2019-7-12-17-0-0", "2019-7-16-18-0-0", period,symbol,exchange)
+    data = Get_all_candlesticks_with_period(cur, period, symbol, exchange)
     js = {'symbols': [{'symbol': symbol, 'periods': ['1m'], 'exchange': 'binance', 'state': 'watch', 'history': len(data),'strategies': []}]}
 
     ii = Instance()
@@ -36,11 +37,26 @@ if __name__ == '__main__':
 
     btc1min = raw_data_managers['binanceBTCUSDT1m']
 
-    r = Returns(btc1min,history_lengh=10)
+    assert isinstance(btc1min, RawDataManager)
+    
+    time = btc1min.get_backfill_data()['time']
 
-    r.backfill()
+    print('Time: ')
+    print(time[0:5])
+    print('********')
+    print(time[-5:])
 
-    print(r.get_TS())
+    r = LogReturns(5, btc1min)
+
+    r_ts = r.get_TS()
+
+    print('Log Ret: ')
+    print(r_ts[0:5])
+    print('********')
+    print(r_ts[-5:])
+
+    
+
     #r.save_DF()
 
     #mean_r = MeanReturns(5, btc1min, r)

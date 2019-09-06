@@ -19,6 +19,8 @@ from feature.bollinger_high import BollingerHigh
 from data_retriever import *
 from strategy.returns import Returns0
 
+from feature.LogReturns import LogReturns
+
 import matplotlib
 import matplotlib.pyplot as plt
 import pandas as pd
@@ -58,12 +60,23 @@ if __name__ == '__main__':
 
     btc1min = raw_data_managers['binanceBTCUSDT1m']
 
+    #log_r = LogReturns(5, btc1min)
 
-    rets = Returns0(btc1min)
+    #rets = Returns0(log_r, btc1min)
 
-    backtest = Backtest(rets, 0.075)
+    bl = BollingerLow(90, 3, btc1min)
+
+    bh = BollingerHigh(90, 3, btc1min)
+
+    cross_cbl = Cross_cBL(bl, btc1min)
+
+    cross_bhc = Cross_BHc(bh, btc1min)
+
+    bollinger1 = BollingerImpl1(cross_cbl, cross_bhc, btc1min)
+
+    backtest = Backtest(bollinger1, 0.075)
 
     backtest.plot_pnl()
 
-    backtest.save_to_disk()
+    #backtest.save_to_disk()
 
