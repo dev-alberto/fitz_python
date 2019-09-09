@@ -1,18 +1,20 @@
 from numpy_ringbuffer import RingBuffer
+from collections.abc import Sequence
+
+from collections import OrderedDict
+
 import numpy as np
 import pandas as pd
 
-# should be an abstract class, all features will inherit from this.
-# raw_data_manager contains the symbol, period data, so no need to add to constructor  
-# there will probably be a "master" type class that supervises all features, saves to disk and 
-# keeps a DF record
-class EmptyFeature:
+
+class EmptyFeature(Sequence):
     
     def __init__(self, lookback, raw_data_manager, backfill=True, history_lengh=None, features=None):
         raw_data_length = raw_data_manager.get_history()
 
         # kind of spaghetii logic here to for feature history length but the gist is this:
-        # one may specify history length when instantiating or we can produce the maximum length given the data available
+        # one may specify history length when instantiating or we can produce the maximum 
+        # length given the data available
         feath = 0
         hh = raw_data_length
 
@@ -33,31 +35,35 @@ class EmptyFeature:
         assert (self.history_lengh + lookback - 1) <= raw_data_length
         assert lookback <= raw_data_manager.get_lookback()
 
-        self.feature = RingBuffer(capacity=self.history_lengh, dtype=np.float64)
+        self.feature = OrderedDict()
+
+        self.feature_numpy = RingBuffer(capacity=self.history_lengh, dtype=np.float64)
+        
         self.latest = None
 
         # a feature may contain multiple features
         self.features = features
 
         self.feature_df = raw_data_manager.get_backfill_df()
+        
         # trim df
         drop_i = self.lookback
         if self.features is not None:
             if len(self.features) > 0:       
                drop_i = drop_i + max([f.get_lookback() for f in self.features]) -1
 
-        #print(drop_i)
         self.feature_df = self.feature_df.iloc[(drop_i-1):]
 
-        #self.feature_df.drop(columns=['volume', 'low', 'high'],inplace=True)
-        #self.feature_df.set_index('time',inplace=True)
+        # must take into account history len;
 
         if self.backfill:
             self.backfill()
 
+        super().__init__()
+
 
     def get_feature(self):
-        assert len(self.feature) > 0
+        #assert len(self.feature) > 0
         return self.feature
 
     def get_history_length(self):
@@ -67,10 +73,31 @@ class EmptyFeature:
     def compute(self, data_dict):
         return []
 
+    def populate_feature(self):
+        for index, value in self.get_TS().items():
+            self.feature_numpy.append(value)
+            self.feature[index] = value
+
+    def update_feature(self, time, value):
+
+        # we remove first item in dict, add the new one, FIFO style
+        
+        # maybe use hist length?
+        if len(self.feature) > self.lookback:
+            self.feature.popitem(last=False)
+
+        self.feature[time] = value
+
+        self.feature_numpy.append(value)
+
+        # remove dis after you know this is indeed the case
+        #assert len(self.feature) == self.history_lengh
+
     # backfill history
     def backfill(self):
+
         data = self.raw_data_manager.get_backfill_data()
-        ff = self.compute(data)
+        ff = self.compute(data)[-self.history_lengh:]
         
         #print(len(ff))
         #print(self.history_lengh)
@@ -79,8 +106,7 @@ class EmptyFeature:
 
         self.feature_df[type(self).__name__] = ff
 
-        for entry in ff:
-            self.feature.append(entry)
+        self.populate_feature()
 
     # live update
     def update(self):
@@ -90,23 +116,28 @@ class EmptyFeature:
 
         candle = self.raw_data_manager.get_live_candle()
 
-        to_append = {'time': candle.get('time'), 'open': candle.get('open'), 'low':candle.get('low'), 'close':candle.get('close'),'high':candle.get('high'),'volume':candle.get('volume'),type(self).__name__:new_val}
-
-        #print(to_append)
-        #print(self.feature_df.head(5))
-        
         self.latest = new_val
 
-        self.feature.append(new_val)
+        self.update_feature(candle.get('time'), new_val)
 
-        self.feature_df.append(pd.DataFrame(to_append,index=[to_append['time']]))
+
+    def __getitem__(self, i):
+        return self.feature[i]
+
+    def __len__(self):
+        return len(self.feature)
+
+    def get_history_start_time(self):
+        return self.feature_df.index[0]
     
-    # this should return a time indexed df containing feature values; maybe makes this a pandas series... 
     def get_DF(self):
         return self.feature_df
 
     def get_TS(self):
         return self.feature_df[type(self).__name__]
+
+    def get_numpy(self):
+        return self.feature_numpy
 
     def get_latest(self):
         return self.latest

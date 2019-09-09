@@ -12,6 +12,6 @@ class MeanReturns(EmptyFeature):
 
     def compute(self, data_dict):
 
-        returns = self.returns.get_feature()
+        returns = self.returns.get_numpy()
 
         return ti.sma(returns, self.lookback)

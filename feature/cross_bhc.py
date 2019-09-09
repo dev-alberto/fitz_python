@@ -14,6 +14,6 @@ class Cross_BHc(EmptyFeature):
     def compute(self, data_dict):
 
         close = data_dict['close']
-        f1 = self.boll.get_feature()
+        f1 = self.boll.get_numpy()
 
         return ti.crossover(f1, close)

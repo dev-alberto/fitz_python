@@ -1,36 +1,34 @@
 import pandas as pd
 from data_retriever import Parse_string_date
-from strategy.strategy import AbstractStrategy
-from feature.feature import EmptyFeature
+from strategy.backtest.IBacktest import IBacktestAble
+
 import matplotlib.pyplot as plt
 
-# stats need to be added 
-class Backtest:
+# stats need to be added; needs to work with alpha/strategy; create extra level of abstraction
+class Simulator:
 
-    def __init__(self, strategy, cost,start_time=None):
-        assert isinstance(strategy, AbstractStrategy)
+    def __init__(self, backtestAble, cost, start_time=None):
+        assert isinstance(backtestAble, IBacktestAble)
 
-        self.strategy = strategy
+        self.backtestAble = backtestAble
         self.cost = cost
         
-        strategy_min_time = strategy.get_earliest_start_time()
+        min_time = backtestAble.get_earliest_start_time()
 
         if start_time is not None: 
             self.start_time = Parse_string_date(start_time)
-            if strategy_min_time > self.start_time:
-                self.start_time = strategy_min_time
+            if min_time > self.start_time:
+                self.start_time = min_time
         else:
-            self.start_time = strategy_min_time
+            self.start_time = min_time
 
-    def compute_pnl(self, save=True):
+        self.DF = self.compute_pnl()
+
+    def compute_pnl(self):
          
-        data = self.strategy.get_main_data_manager().get_backfill_df()
-    
-        data = data[(data.index >= self.start_time)]
+        data = self.backtestAble.get_main_data_manager().get_backfill_df_from(self.start_time)
 
-        assert (len(data)) > 0
-
-        #data.set_index('time',inplace=True)
+        self.backtestAble.backfill(data.index)
 
         returns = []
 
@@ -40,7 +38,8 @@ class Backtest:
         prevprev_alloc = 0
 
         for index, row in data.iterrows():
-            alloc = self.strategy.compute(index)
+
+            alloc = self.backtestAble[index]
 
             allocs.append(alloc)
 
@@ -61,9 +60,8 @@ class Backtest:
         return data
 
     def plot_pnl(self, period='60T'):
-        ll = self.compute_pnl()
 
-        ret = pd.Series(data = ll['returns'], index = ll.index)
+        ret = pd.Series(data = self.DF['returns'], index = self.DF.index)
 
         hh = ret.resample(period).sum()
 
@@ -74,9 +72,8 @@ class Backtest:
         plt.show()
 
     def save_to_disk(self, path='data_test/backtest/'):
-        df = self.compute_pnl()
-        name = type(self.strategy).__name__ + '.csv'
-        df.to_csv(path + name)
+        name = type(self.backtestAble).__name__ + '.csv'
+        self.DF.to_csv(path + name)
 
     def compute_cumulative_pnl(self):
         pass

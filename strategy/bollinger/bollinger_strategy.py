@@ -1,4 +1,4 @@
-from strategy.live_strategy import AbstractLiveStrategy
+from strategy.strategy import AbstractStrategy
 from strategy.bollinger.boll1 import BollingerImpl1
 
 from raw_data_manager import RawDataManager
@@ -10,11 +10,9 @@ from feature.bollinger_low import BollingerLow
 from feature.bollinger_high import BollingerHigh
 
 
-class BollingerLive(AbstractLiveStrategy):
+class BollingerStrategy(AbstractStrategy):
 
-    def __init__(self, size, raw_data_manager, ticker):
-        
-        #btc1min = raw_data_managers['binanceBTCUSDT1m']
+    def __init__(self, raw_data_manager, ticker=None):
 
         assert isinstance(raw_data_manager, RawDataManager)
 
@@ -29,8 +27,6 @@ class BollingerLive(AbstractLiveStrategy):
 
         cross_bhc = Cross_BHc(bh, raw_data_manager)
 
-        bollinger1 = BollingerImpl1(cross_cbl, cross_bhc, raw_data_manager,is_live=True)
+        bollinger1 = BollingerImpl1(cross_cbl, cross_bhc, raw_data_manager)
 
-        super().__init__(size=size, raw_data_manager=raw_data_manager, ticker=ticker,strategies=[bollinger1], features=[bl,bh,cross_cbl,cross_bhc])
-
-        self.strategy_weights[bollinger1] = 1
+        super().__init__(raw_data_manager, {bollinger1:1}, ticker=ticker)

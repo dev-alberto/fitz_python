@@ -3,7 +3,7 @@ from ticker import Ticker
 
 import time
 
-from strategy.bollinger_live import BollingerLive
+from strategy.bollinger.bollinger_strategy import BollingerStrategy
 
 class Instance:
 
@@ -14,7 +14,7 @@ class Instance:
 
         self.tickers = {}
 
-        self.live_bollinger = None
+        self.bollinger = None
     
     def set_instance(self, instance):
         self.instance = instance
@@ -53,7 +53,7 @@ class Instance:
             ticker_key = exchange + symbol
             assert ticker_key in self.tickers
 
-            self.live_bollinger = BollingerLive(1000, self.raw_data_managers[key], self.tickers[ticker_key])
+            self.bollinger = BollingerStrategy(self.raw_data_managers[key], self.tickers[ticker_key])
 
 
     def update(self, exchange, symbol, period, data):
@@ -65,7 +65,8 @@ class Instance:
 
         # for different strategies, will need to update proper strategies, depending on key
         ii = self.raw_data_managers[key].get_live_candle().get('time')
-        return self.live_bollinger.generate_position(ii)
+
+        return self.bollinger.generate_position(ii)
 
     def update_ticker(self, symbol, exchange, ticker):
         key = exchange + symbol

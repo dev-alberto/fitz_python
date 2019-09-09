@@ -1,13 +1,13 @@
-from strategy.strategy import AbstractStrategy
+from strategy.alpha import Alpha
 #from feature.bollinger_high import BollingerHigh
 #from feature.bollinger_low import BollingerLow
 #from feature.bollinger_middle import BollingerMiddle
 
 
-class BollingerS(AbstractStrategy):
+class BollApha(Alpha):
 
     def __init__(self, raw_data_manager, cross_cbl=None, cross_blc=None, cross_cbm=None, 
-    cross_bmc=None,cross_cbh=None, cross_bhc=None, is_live=False):
+    cross_bmc=None,cross_cbh=None, cross_bhc=None):
         
         f_list = []
 
@@ -29,17 +29,11 @@ class BollingerS(AbstractStrategy):
         if cross_bhc is not None:
             f_list.append(cross_bhc)
         
-        super().__init__(initial_allocation=0, pair='BTCUSDT', period='1m', raw_data_managers=[raw_data_manager], 
-                        feature_list=f_list, model=None,is_live=is_live)
+        super().__init__(pair='BTCUSDT', period='1m', raw_data_managers=[raw_data_manager], 
+                        feature_list=f_list, model=None,init_alloc=0)
 
     def compute(self, ii, feature_val):
-        #if feature_val == 1:
-        #    self.allocation = 1
-        #else:
-        #    self.allocation = 0
-        
-        #return self.allocation
-       
+               
         if feature_val == 1:
             self.allocation = 1
 

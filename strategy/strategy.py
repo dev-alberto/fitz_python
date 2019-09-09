@@ -1,63 +1,117 @@
 from raw_data_manager import RawDataManager
+from ticker import Ticker
+from strategy.alpha import Alpha
+from feature.feature import EmptyFeature
 
-class AbstractStrategy:
+from strategy.ITrade import ITradeAble
+from strategy.backtest.IBacktest import IBacktestAble
 
-    def __init__(self, initial_allocation, pair, period, raw_data_managers, is_live=False, feature_list=None, model=None):
-        self.pair = pair
-        self.period = period
-        self.model = model
-        self.feature_list = feature_list
-        self.is_live = is_live
+from collections import OrderedDict
+from collections.abc import Sequence
 
-        self.pnl = 0
+# add book info, as well as other factors
+class AbstractStrategy(Sequence, IBacktestAble, ITradeAble):
 
-        assert len(raw_data_managers) > 0
+    def __init__(self, raw_data_manager, alphas, ticker=None, init_alloc=0):
 
-        # start computing strategy at index 0 of raw data is there are no feature that need lookback
-        # if feature_list is None:
-        #    self.index = 0
-        # else:
-            # start with strategy computation at the earliest, i.e after all features have enough data
-        #    self.index = max([f.get_lookback() for f in feature_list]) - 1 
-
-        self.raw_data_managers = raw_data_managers
-
-        self.main_data_manager = None
+        assert isinstance(raw_data_manager, RawDataManager)
         
-        for m in raw_data_managers:
-            assert isinstance(m, RawDataManager)
-            # exchange should also be here
-            if period == m.get_period() and pair == m.get_symbol():
-                self.main_data_manager = m
-                break
+        if ticker is not None:    
+            assert isinstance(ticker, Ticker)
+
+        assert isinstance(alphas, dict)
         
-        assert self.main_data_manager is not None
+        self.raw_data_manager = raw_data_manager
 
-        # self.time_data = self.main_data_manager.get_backfill_data().get('time')
+        self.alphas = alphas
+
+        self.ticker = ticker
         
-        self.allocation = initial_allocation
+        self.features = []
 
-    # override dis ... 
-    def compute(self, ii):
-        return self.allocation
+        for alpha in alphas.keys():
+            assert isinstance(alpha, Alpha)
+            ff = alpha.get_features()
+            if ff is not None:
+                for f in ff:
+                    assert isinstance(f, EmptyFeature)
+                    self.features.append(f)
 
-    def get_main_data_manager(self):
-        return self.main_data_manager
+        self.start_time = self.get_earliest_start_time()
+
+        self.history = min([a.get_history_len() for a in self.alphas.keys()])
+
+        self.strategy = OrderedDict()
+        self.strategy[self.start_time] = init_alloc
+
+    # for backtest purpose only
+    def backfill(self, time_index):
+
+        # backfill alphas
+        for k in self.alphas.keys():
+            k.backfill(time_index)
+
+        for index in time_index:
+            position = 0
+            
+            for a, w in self.alphas.items():
+                alloc = a[index]
+                position += alloc * w
+
+            self.strategy[index] = position
+
+        return self.strategy
+
+
+    def generate_position(self, ii):
+        self.update_features()
+
+        print('Generating position... at')
+        print(ii)
+        print('Ticker 1 ... ')
+        print(self.ticker.get_bid())
+
+        position = 0
+        for a, w in self.alphas.items():
+            alloc = a.compute(ii)
+            position += alloc * w
+
+        if len(self.strategy) > self.history:
+            self.strategy.popitem(last=False)
+        
+        self.strategy[ii] = position
+        
+        print('Position generated, ticker is ... ')
+        print(self.ticker.get_bid())
+
+        return position
+
+
+    def update_features(self):
+        for f in self.features:
+            f.update()
+
 
     def get_earliest_start_time(self):
-        if len(self.feature_list) == 0:
-            return self.main_data_manager.get_backfill_data()['time'][0]
-        
         dates = []
-        for f in self.feature_list:
-            dd = f.get_DF()
-            # print(dd.index)
-            dates.append(dd.index[0])
+        for alpha in self.alphas.keys():
+            dd = alpha.get_earliest_start_time()
+            dates.append(dd)
         
         return max(dates)
+
+    def get_main_data_manager(self):
+        return self.raw_data_manager
+
 
     def __eq__(self, other_strategy):
         return isinstance(other_strategy, AbstractStrategy) and type(self).__name__ == type(other_strategy).__name__
 
     def __hash__(self):
         return hash(str(self))
+
+    def __getitem__(self, i):
+        return self.strategy[i]
+
+    def __len__(self):
+        return len(self.strategy)

@@ -36,16 +36,24 @@ class RawDataManager:
 
         return r
     
+    # should not be necessary
     def get_live_df(self):
         dd = self.get_live_data()
-        return pd.DataFrame.from_dict(dd)
+        df = pd.DataFrame.from_dict(dd)
+        df.set_index('time', inplace=True)
+        return df
 
-    # maybe they should be time indexed df's? 
     def get_backfill_df(self):
         dd = self.get_backfill_data()
         df = pd.DataFrame.from_dict(dd)
         df.set_index('time', inplace=True)
         return df
+
+    # backtest purposes 
+    def get_backfill_df_from(self, start_time):
+        dd = self.get_backfill_df()
+
+        return dd[(dd.index >= start_time)]
 
     def get_backfill_data(self):
         return self.backfill_data.get_data()

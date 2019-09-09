@@ -1,4 +1,5 @@
 import numpy as np
+import pandas as pd
 
 from db_connect import Connect
 from rpc.rpc_bridge import RpcBridge
@@ -6,6 +7,11 @@ from rpc.db_bridge import DbBridge
 from instance import Instance
 
 from raw_data_manager import RawDataManager
+
+from feature.bollinger_high import *
+from feature.bollinger_low import *
+from feature.cross_bhc import *
+from feature.cross_cbl import *
 
 
 from feature.LogReturns import LogReturns
@@ -41,30 +47,31 @@ if __name__ == '__main__':
     
     time = btc1min.get_backfill_data()['time']
 
-    print('Time: ')
-    print(time[0:5])
-    print('********')
-    print(time[-5:])
+    #print('Time: ')
+    #print(time[0:5])
+    #print('********')
+    #print(time[-5:])
 
-    r = LogReturns(5, btc1min)
+    #r = LogReturns(5, btc1min)
 
-    r_ts = r.get_TS()
+    #r_ts = list(r.get_feature().keys())
 
-    print('Log Ret: ')
-    print(r_ts[0:5])
-    print('********')
-    print(r_ts[-5:])
+    #print('Log Ret: ')
+    #print(r_ts[0:5])
+    #print('********')
+    #print(r_ts[-5:])
 
-    
+    bl = BollingerLow(90, 3, btc1min)
 
-    #r.save_DF()
+    bh = BollingerHigh(90, 3, btc1min)
 
-    #mean_r = MeanReturns(5, btc1min, r)
+    cross_cbl = Cross_cBL(bl, btc1min)
 
-    #mean_r.backfill()
+    cross_bhc = Cross_BHc(bh, btc1min)
 
-    #ff = mean_r.get_feature()
+    dd1 = bl.get_DF()
 
-    #print(min(ff))
+    dd2 = cross_cbl.get_DF()
 
-    #print(max(ff))
+    print(dd1.head(5))
+    print(dd2.head(5))
