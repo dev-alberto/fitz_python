@@ -8,6 +8,8 @@ from instance import Instance
 
 from raw_data_manager import RawDataManager
 
+from feature.close import Close
+
 from feature.bollinger_high import *
 from feature.bollinger_low import *
 from feature.cross_bhc import *
@@ -61,17 +63,18 @@ if __name__ == '__main__':
     #print('********')
     #print(r_ts[-5:])
 
-    bl = BollingerLow(90, 3, btc1min)
+    #bl = BollingerLow(90, 3, btc1min)
 
-    bh = BollingerHigh(90, 3, btc1min)
+    #bh = BollingerHigh(90, 3, btc1min)
 
-    cross_cbl = Cross_cBL(bl, btc1min)
+    #cross_cbl = Cross_cBL(bl, btc1min)
 
-    cross_bhc = Cross_BHc(bh, btc1min)
+    #cross_bhc = Cross_BHc(bh, btc1min)
 
-    dd1 = bl.get_DF()
+    #dd1 = bl.get_DF()
 
-    dd2 = cross_cbl.get_DF()
+    #dd2 = cross_cbl.get_DF()
 
-    print(dd1.head(5))
-    print(dd2.head(5))
+    cl = Close(btc1min)
+
+    print(cl.get_DF().head(5))
