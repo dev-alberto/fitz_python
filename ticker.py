@@ -20,6 +20,9 @@ class Ticker:
     def get_ask(self):
         return self.ask
 
+    def get_time(self):
+        return self.updated_at
+
     def update(self, data):
         
         self.bid = data['bid']

@@ -58,6 +58,10 @@ class RawDataManager:
     def get_backfill_data(self):
         return self.backfill_data.get_data()
 
+    def get_latest(self):
+        ll = self.get_live_data()
+        return {k:v[-1] for (k,v) in ll.items()}
+
     def backfill(self, data):
         assert len(data) != 0
 

@@ -88,6 +88,9 @@ class EmptyFeature(Sequence):
 
         self.feature[time] = value
 
+        #print('Updating feature... ' + type(self).__name__)
+        #print(time)
+
         self.feature_numpy.append(value)
 
         # remove dis after you know this is indeed the case
@@ -126,6 +129,15 @@ class EmptyFeature(Sequence):
 
     def __len__(self):
         return len(self.feature)
+
+    def __eq__(self, other_feature):
+        return isinstance(other_feature, EmptyFeature) and type(self).__name__ == type(other_feature).__name__
+
+    def __hash__(self):
+        return hash(str(self))
+
+    def __str__(self):
+        return type(self).__name__ + self.raw_data_manager.get_symbol() + self.raw_data_manager.get_period()
 
     def get_history_start_time(self):
         return self.feature_df.index[0]

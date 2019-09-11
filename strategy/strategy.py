@@ -3,16 +3,20 @@ from ticker import Ticker
 from strategy.alpha import Alpha
 from feature.feature import EmptyFeature
 
+
 from strategy.ITrade import ITradeAble
 from strategy.backtest.IBacktest import IBacktestAble
 
 from collections import OrderedDict
 from collections.abc import Sequence
+from datetime import datetime
+
+import csv
 
 # add book info, as well as other factors
 class AbstractStrategy(Sequence, IBacktestAble, ITradeAble):
 
-    def __init__(self, raw_data_manager, alphas, ticker=None, init_alloc=0):
+    def __init__(self, raw_data_manager, alphas, features=[], ticker=None, init_alloc=0):
 
         assert isinstance(raw_data_manager, RawDataManager)
         
@@ -27,15 +31,7 @@ class AbstractStrategy(Sequence, IBacktestAble, ITradeAble):
 
         self.ticker = ticker
         
-        self.features = []
-
-        for alpha in alphas.keys():
-            assert isinstance(alpha, Alpha)
-            ff = alpha.get_features()
-            if ff is not None:
-                for f in ff:
-                    assert isinstance(f, EmptyFeature)
-                    self.features.append(f)
+        self.features = features
 
         self.start_time = self.get_earliest_start_time()
 
@@ -43,6 +39,25 @@ class AbstractStrategy(Sequence, IBacktestAble, ITradeAble):
 
         self.strategy = OrderedDict()
         self.strategy[self.start_time] = init_alloc
+
+        self.csv_path = 'data_test/live/strategies/' + type(self).__name__ + '.csv'
+        alpha_names = [type(list(alphas.keys())[i]).__name__ for i in range(len(alphas))]
+        
+        strategy_file = open(self.csv_path, 'w+')
+            
+        r1 = raw_data_manager.get_latest()
+
+        for k in alpha_names:
+            r1[k] = init_alloc
+        r1['strategy'] = 0
+        r1['bid'] = 0
+        r1['ask'] = 0
+        #r1['ticker_time'] = 0
+        self.fieldnames = list(r1.keys())
+        writer = csv.DictWriter(strategy_file, fieldnames=self.fieldnames)
+
+        writer.writeheader()
+        writer.writerow(r1)
 
     # for backtest purpose only
     def backfill(self, time_index):
@@ -64,25 +79,34 @@ class AbstractStrategy(Sequence, IBacktestAble, ITradeAble):
 
 
     def generate_position(self, ii):
+        
         self.update_features()
 
-        print('Generating position... at')
-        print(ii)
-        print('Ticker 1 ... ')
-        print(self.ticker.get_bid())
+        #print(ii)
+        log = {}
+        log['bid'] = self.ticker.get_bid()
+        log['ask'] = self.ticker.get_ask()
+        #log['ticker_time'] = datetime.fromtimestamp(self.ticker.get_time())
 
         position = 0
         for a, w in self.alphas.items():
             alloc = a.compute(ii)
             position += alloc * w
+            log[type(a).__name__] = alloc
 
         if len(self.strategy) > self.history:
             self.strategy.popitem(last=False)
         
         self.strategy[ii] = position
+
+        log['strategy'] = position
+
+        llog = {**log, **self.raw_data_manager.get_latest()}
         
-        print('Position generated, ticker is ... ')
-        print(self.ticker.get_bid())
+        strategy_file = open(self.csv_path, 'a')
+
+        writer = csv.DictWriter(strategy_file, fieldnames=self.fieldnames)
+        writer.writerow(llog)
 
         return position
 
@@ -102,6 +126,7 @@ class AbstractStrategy(Sequence, IBacktestAble, ITradeAble):
 
     def get_main_data_manager(self):
         return self.raw_data_manager
+
 
 
     def __eq__(self, other_strategy):

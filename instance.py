@@ -44,6 +44,8 @@ class Instance:
     def backfill(self, exchange, symbol, period, data):
         key = exchange + symbol + period
 
+        print('Backfilling... ' + key)
+
         if self.raw_data_managers.get(key) != None:
             self.raw_data_managers[key].backfill(data)
         
@@ -58,15 +60,18 @@ class Instance:
 
     def update(self, exchange, symbol, period, data):
         key = exchange + symbol + period
-        #print('Updating ... ' + key)
+        print('Updating ... ' + key)
         #print(data)
         if self.raw_data_managers.get(key) != None:
             self.raw_data_managers[key].update(data)
 
         # for different strategies, will need to update proper strategies, depending on key
-        ii = self.raw_data_managers[key].get_live_candle().get('time')
 
-        return self.bollinger.generate_position(ii)
+        if period == '1m':
+            ii = self.raw_data_managers[key].get_live_candle().get('time')
+            position = self.bollinger.generate_position(ii)
+
+            return position
 
     def update_ticker(self, symbol, exchange, ticker):
         key = exchange + symbol

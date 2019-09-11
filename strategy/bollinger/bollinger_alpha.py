@@ -29,16 +29,21 @@ class BollApha(Alpha):
         if cross_bhc is not None:
             f_list.append(cross_bhc)
         
-        super().__init__(pair='BTCUSDT', period='1m', raw_data_managers=[raw_data_manager], 
+        super().__init__(pair='BTCUSDT', period=raw_data_manager.get_period(), raw_data_managers=[raw_data_manager], 
                         feature_list=f_list, model=None,init_alloc=0)
 
     def compute(self, ii, feature_val):
                
-        if feature_val == 1:
-            self.allocation = 1
-
-        elif feature_val == -1:
-            self.allocation = 0
+        if self.allocation < 1:
+            if feature_val > 0:
+                self.allocation = 1
+            else: self.allocation = 0
+        
+        if self.allocation == 1:
+            if feature_val < 0:
+                self.allocation = 0
+            
+            else: self.allocation = 1
 
         return self.allocation
        
