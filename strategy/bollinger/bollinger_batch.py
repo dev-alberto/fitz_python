@@ -8,6 +8,7 @@ from feature.cross_bhc import Cross_BHc
 from feature.bollinger_low import BollingerLow
 from feature.bollinger_high import BollingerHigh
 
+
 class BollingerBatch(Batch):
 
     def __init__(self, raw_data_manager, ticker=None):

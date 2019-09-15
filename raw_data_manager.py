@@ -12,7 +12,7 @@ from numpy_ringbuffer import RingBuffer
 class RawDataManager:
 
     def __init__(self, exchange, symbol, period, lookback, history):
-        #self.DF = None
+        # self.DF = None
 
         self.exchange = exchange
         self.symbol = symbol
@@ -133,7 +133,6 @@ class RawDataManager:
         self.live_data.update_close(candle.get('close'))
         self.live_data.update_volume(candle.get('volume'))
 
-
     def sava_backfill_to_disk(self,path):
         df = self.get_backfill_df()
         df.to_csv(path) 
@@ -152,3 +151,7 @@ class RawDataManager:
 
     def get_live_candle(self):
         return self.live_candle
+
+    def __eq__(self, other):
+        assert isinstance(other, RawDataManager)
+        return self.symbol == other.symbol and self.exchange == other.exchange and self.period == other.period

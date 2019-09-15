@@ -1,7 +1,7 @@
 from strategy.strategy import AbstractStrategy
 from strategy.alpha import Alpha
 
-# could be a subclass of strategy, where each alpha in strategy has equal weights
+
 class Batch(AbstractStrategy):
 
     def __init__(self, alphas, ticker=None):

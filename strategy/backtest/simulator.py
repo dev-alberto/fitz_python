@@ -4,6 +4,7 @@ from strategy.backtest.IBacktest import IBacktestAble
 
 import matplotlib.pyplot as plt
 
+
 # stats need to be added; needs to work with alpha/strategy; create extra level of abstraction
 class Simulator:
 
@@ -46,13 +47,12 @@ class Simulator:
             # prev alloc
             cost = (self.cost/100.0) * abs(prev_alloc - prevprev_alloc) * row['open']
 
-            val = prev_alloc * (row['close'] - row['open'])  - cost
+            val = prev_alloc * (row['close'] - row['open']) - cost
 
             prevprev_alloc = prev_alloc
             prev_alloc = alloc
             
             returns.append(val)
-
         
         data['returns'] = returns
         data['allocs'] = allocs
@@ -61,7 +61,7 @@ class Simulator:
 
     def plot_pnl(self, period='60T'):
 
-        ret = pd.Series(data = self.DF['returns'], index = self.DF.index)
+        ret = pd.Series(data=self.DF['returns'], index=self.DF.index)
 
         hh = ret.resample(period).sum()
 
@@ -77,7 +77,6 @@ class Simulator:
 
     def compute_cumulative_pnl(self):
         pass
-    
 
     def compute_range_pnl(self):
         pass

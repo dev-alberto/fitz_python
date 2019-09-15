@@ -26,35 +26,23 @@ class BollingerStrategy(AbstractStrategy):
 
         #assert raw_data_manager.get_period() == '1m' and raw_data_manager.get_symbol() == 'BTCUSDT'
 
-        features = []
+        bl = BollingerLow(20, 3, raw_data_manager)
 
-        bl = BollingerLow(90, 3, raw_data_manager)
-        features.append(bl)
+        bh = BollingerHigh(20, 3, raw_data_manager)
 
-        bh = BollingerHigh(90, 3, raw_data_manager)
-        features.append(bh)
-
-        bm = BollingerMiddle(90, 3, raw_data_manager)
-        features.append(bm)
+        # bm = BollingerMiddle(90, 3, raw_data_manager)
 
         cross_cbl = Cross_cBL(bl, raw_data_manager)
-        features.append(cross_cbl)
 
         cross_bhc = Cross_BHc(bh, raw_data_manager)
-        features.append(cross_bhc)
 
         cross_cbh = Cross_cBH(bh, raw_data_manager)
-        features.append(cross_cbh)
 
-        cross_bmc = Cross_BMc(bm, raw_data_manager)
-        features.append(cross_bmc)
+        # cross_bmc = Cross_BMc(bm, raw_data_manager)
 
-        cross_cbm = Cross_cBM(bm, raw_data_manager)
-        features.append(cross_cbm)
+        # cross_cbm = Cross_cBM(bm, raw_data_manager)
 
         cross_blc = Cross_BLc(bl, raw_data_manager)
-        features.append(cross_blc)
-        
 
         bollinger1 = BollingerImpl1(cross_cbl, cross_bhc, raw_data_manager)
 
@@ -62,9 +50,10 @@ class BollingerStrategy(AbstractStrategy):
 
         bollinger3 = BollingerImpl3(cross_cbl, cross_bhc, cross_cbh, cross_blc, raw_data_manager)
 
-        bollinger4 = BollingerImpl4(cross_cbl, cross_bhc, cross_cbh, cross_blc, cross_bmc, cross_cbm, raw_data_manager)
+        # bollinger4 = BollingerImpl4(cross_cbl, cross_bhc, cross_cbh, cross_blc, cross_bmc, cross_cbm, raw_data_manager)
 
-        weights  = {bollinger1:0.33, bollinger2:0.34,bollinger3:0.33}
-        #weights  = {bollinger2:1}
+        weights = {bollinger1: 0.33, bollinger2: 0.34, bollinger3: 0.33}
 
-        super().__init__(raw_data_manager, weights, features=features ,ticker=ticker)
+        # weights  = {bollinger2:1}
+
+        super().__init__(raw_data_manager, weights, ticker=ticker)

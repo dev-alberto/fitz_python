@@ -5,6 +5,7 @@ import time
 
 from strategy.bollinger.bollinger_strategy import BollingerStrategy
 
+
 class Instance:
 
     def __init__(self, instance=None):
@@ -46,7 +47,7 @@ class Instance:
 
         print('Backfilling... ' + key)
 
-        if self.raw_data_managers.get(key) != None:
+        if self.raw_data_managers.get(key) is not None:
             self.raw_data_managers[key].backfill(data)
         
         # instatiate strategy here? Yeah.. Check which raw data managers have been backfilled first ... 
@@ -57,12 +58,11 @@ class Instance:
 
             self.bollinger = BollingerStrategy(self.raw_data_managers[key], self.tickers[ticker_key])
 
-
     def update(self, exchange, symbol, period, data):
         key = exchange + symbol + period
-        print('Updating ... ' + key)
-        #print(data)
-        if self.raw_data_managers.get(key) != None:
+        # print('Updating ... ' + key)
+        # print(data)
+        if self.raw_data_managers.get(key) is not None:
             self.raw_data_managers[key].update(data)
 
         # for different strategies, will need to update proper strategies, depending on key
