@@ -1,13 +1,12 @@
-from strategy.strategy import AbstractStrategy
-from strategy.bollinger.boll1 import BollingerImpl1
+
 from strategy.bollinger.boll2 import BollingerImpl2
 from strategy.bollinger.boll3 import BollingerImpl3
 from strategy.bollinger.boll4 import BollingerImpl4
-
 from raw_data_manager import RawDataManager
 
 from feature.cross_cbl import Cross_cBL
 from feature.cross_bhc import Cross_BHc
+
 from feature.cross_cbh import Cross_cBH
 from feature.cross_bmc import Cross_BMc
 from feature.cross_cbm import Cross_cBM
@@ -57,3 +56,4 @@ class BollingerStrategy(AbstractStrategy):
         # weights  = {bollinger2:1}
 
         super().__init__(raw_data_manager, weights, ticker=ticker)
+

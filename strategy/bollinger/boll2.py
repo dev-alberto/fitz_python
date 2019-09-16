@@ -1,19 +1,30 @@
 from strategy.bollinger.bollinger_alpha import BollApha
+import random
 
 
-# -up + down + sup
 class BollingerImpl2(BollApha):
 
-    def __init__(self, cross_cbl, cross_bhc, cross_cbh, raw_data_manager):
-        self.cross_bhc = cross_bhc
-        self.cross_cbl = cross_cbl
-        self.cross_cbh = cross_cbh
-        
-        super().__init__(raw_data_manager, cross_cbl=cross_cbl, cross_bhc=cross_bhc,cross_cbh=cross_cbh)
+    def __init__(self, log_returns, bollinger_high, bollinger_low, bollinger_middle, close, raw_data_manager):
+        self.log_returns = log_returns
+        self.bollinger_high = bollinger_high
+        self.bollinger_low = bollinger_low
+        self.bollinger_middle = bollinger_middle
+        self.close = close
+       # assert isinstance(log_returns, LogReturns)
+
+        super().__init__('BTCUSDT','1m',[raw_data_manager],feature_list=[log_returns, bollinger_high, bollinger_low, bollinger_middle, close])
+
 
     def compute(self, ii):
-        #val = - self.cross_cbl[ii] + self.cross_bhc[ii]
-        
-        val = - self.cross_cbl[ii] + self.cross_bhc[ii] + self.cross_cbh[ii]
 
-        return super().compute_(val)
+        lr = (self.close[ii] - self.bollinger_middle[ii])/(self.bollinger_high[ii] - self.bollinger_low[ii])
+        sgn = (self.close[ii] - self.bollinger_middle[ii])/(self.bollinger_high[ii] - self.bollinger_low[ii]) * self.log_returns[ii]
+
+        if lr > 0:
+            self.allocation = 1
+
+        else:
+            self.allocation = -1
+
+
+        return self.allocation
