@@ -39,6 +39,8 @@ class Alpha(TradeAble):
 
         self.cumulative_pnl = 0
 
+        self.change_position_pnl = 0
+
         # comment once logs no longer needed
         self.csv_path = 'data_test/live/alphas/' + type(self).__name__ + '.csv'
 
@@ -84,8 +86,13 @@ class Alpha(TradeAble):
         pnl = self.allocation * (self.main_data_manager.get_latest()['close'] - self.main_data_manager.get_latest()['open'])
 
         self.cumulative_pnl += pnl
+        self.change_position_pnl += pnl
+        prev = self.allocation
 
         position = self.compute(ii)
+
+        if prev != position:
+            self.change_position_pnl = 0
 
         if len(self.alpha) > self.history:
             self.alpha.popitem(last=False)
