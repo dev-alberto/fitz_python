@@ -42,34 +42,34 @@ class Alpha(TradeAble):
         self.change_position_pnl = 0
 
         # comment once logs no longer needed
-        self.csv_path = 'data_test/live/alphas/' + type(self).__name__ + '.csv'
-
-        alpha_file = open(self.csv_path, 'w+')
-        row, fieldnames = self.create_log_row(0, 0)
-        writer = csv.DictWriter(alpha_file, fieldnames=fieldnames)
-        writer.writeheader()
-        writer.writerow(row)
-        alpha_file.close()
+        # self.csv_path = 'data_test/live/alphas/' + type(self).__name__ + '.csv'
+        #
+        # alpha_file = open(self.csv_path, 'w+')
+        # row, fieldnames = self.create_log_row(0, 0)
+        # writer = csv.DictWriter(alpha_file, fieldnames=fieldnames)
+        # writer.writeheader()
+        # writer.writerow(row)
+        # alpha_file.close()
 
         super().__init__(self.alpha)
 
-    def create_log_row(self, current_pnl, cum_pnl):
-        r = self.main_data_manager.get_latest()
-
-        r['allocation'] = self.allocation
-
-        for f in self.feature_list:
-            name = str(f)
-            first_vals = f.get_latest()
-            r[name] = first_vals['value']
-            # r[name + '_time'] = first_vals['time']
-
-        r['returns'] = current_pnl
-        r['pnl'] = cum_pnl
-
-        fieldnames = list(r.keys())
-
-        return r, fieldnames
+    # def create_log_row(self, current_pnl, cum_pnl):
+    #     r = self.main_data_manager.get_latest()
+    #
+    #     r['allocation'] = self.allocation
+    #
+    #     for f in self.feature_list:
+    #         name = str(f)
+    #         first_vals = f.get_latest()
+    #         r[name] = first_vals['value']
+    #         # r[name + '_time'] = first_vals['time']
+    #
+    #     r['returns'] = current_pnl
+    #     r['pnl'] = cum_pnl
+    #
+    #     fieldnames = list(r.keys())
+    #
+    #     return r, fieldnames
 
     def backfill(self, time_index):
         for ii in time_index:
@@ -99,12 +99,12 @@ class Alpha(TradeAble):
 
         self.alpha[ii] = position
 
-        alpha_file = open(self.csv_path, 'a')
-        row, fieldnames = self.create_log_row(pnl, self.cumulative_pnl)
-
-        writer = csv.DictWriter(alpha_file, fieldnames=fieldnames)
-        writer.writerow(row)
-        alpha_file.close()
+        # alpha_file = open(self.csv_path, 'a')
+        # row, fieldnames = self.create_log_row(pnl, self.cumulative_pnl)
+        #
+        # writer = csv.DictWriter(alpha_file, fieldnames=fieldnames)
+        # writer.writerow(row)
+        # alpha_file.close()
 
         return position
 

@@ -1,8 +1,8 @@
-from strategy.bollinger.bollinger_alpha import BollApha
+from strategy.alpha import Alpha
 import random
 
 
-class BollingerImpl2(BollApha):
+class BollingerImpl2(Alpha):
 
     def __init__(self, log_returns, bollinger_high, bollinger_low, bollinger_middle, close, raw_data_manager):
         self.log_returns = log_returns
@@ -12,8 +12,7 @@ class BollingerImpl2(BollApha):
         self.close = close
        # assert isinstance(log_returns, LogReturns)
 
-        super().__init__('BTCUSDT','1m',[raw_data_manager],feature_list=[log_returns, bollinger_high, bollinger_low, bollinger_middle, close])
-
+        super().__init__('BTCUSDT','1m',[raw_data_manager], feature_list=[log_returns, bollinger_high, bollinger_low, bollinger_middle, close])
 
     def compute(self, ii):
 
@@ -25,6 +24,5 @@ class BollingerImpl2(BollApha):
 
         else:
             self.allocation = -1
-
 
         return self.allocation

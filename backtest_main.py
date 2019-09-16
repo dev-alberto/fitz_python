@@ -21,15 +21,19 @@ from feature.LogReturns import LogReturns
 
 if __name__ == '__main__':
     
-    conn = Connect('fitz.db')
+    # conn = Connect('fitz.db')
+    conn = Connect('binance_0.1.db')
+
     cur = conn.cursor()
 
     symbol = 'BTCUSDT'
     period = '1m'
     exchange = 'binance'
 
-    #data = Get_candlesticks_between_dates(cur, "2019-7-12-17-0-0", "2019-7-16-18-0-0", period,symbol,exchange)
-    data = Get_all_candlesticks_with_period(cur, period,symbol,exchange)
+    # data = Get_candlesticks_between_dates(cur, "2019-7-12-17-0-0", "2019-7-16-18-0-0", period,symbol,exchange)
+    # data = Get_all_candlesticks_with_period(cur, period,symbol,exchange)
+
+    data = Get_gecko_data(cur, symbol)
     
     js = {'symbols': [{'symbol': symbol, 'periods': ['1m'], 'exchange': 'binance', 'state': 'watch', 'history': len(data),'strategies': []}]}
 
@@ -53,5 +57,5 @@ if __name__ == '__main__':
 
     backtest.plot_pnl()
 
-    backtest.save_to_disk()
+    # backtest.save_to_disk()
 

@@ -5,7 +5,7 @@ __pycache__/
 
 # C extensions
 *.so
-.ideea/*
+
 # Distribution / packaging
 .Python
 build/
@@ -102,3 +102,5 @@ venv.bak/
 
 # mypy
 .mypy_cache/
+
+.ideea/
