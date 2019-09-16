@@ -42,15 +42,15 @@ if __name__ == '__main__':
 
     btc1min = raw_data_managers['binanceBTCUSDT1m']
 
-    #bol_strategy = BollingerStrategy(btc1min)
+    bol_strategy = BollingerStrategy(btc1min)
 
     #bol_batch = BollingerBatch(btc1min)
 
-    log_r = LogReturns(5, btc1min)
+    #log_r = LogReturns(7, btc1min)
 
-    rets = Returns0(log_r, btc1min)
+    #rets = Returns0(log_r, btc1min)
 
-    backtest = Simulator(rets, 0)
+    backtest = Simulator(bol_strategy, 0.07)
 
     backtest.plot_pnl()
 
