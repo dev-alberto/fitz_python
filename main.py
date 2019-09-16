@@ -1,12 +1,7 @@
-from db_connect import Connect
 from rpc.rpc_bridge import RpcBridge
-from rpc.db_bridge import DbBridge
 from instance import Instance
 
-from data_retriever import Get_all_candles, Get_candlesticks_between_dates
 import pandas as pd
-import numpy as np
-import tulipy as ti
 import zerorpc
 
 #    conn = Connect('fitz.db')

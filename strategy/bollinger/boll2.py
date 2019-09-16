@@ -1,10 +1,8 @@
-from strategy.alpha import Alpha
-#from feature.LogReturns import LogReturns
-
+from strategy.bollinger.bollinger_alpha import BollApha
 import random
 
 
-class BollingerImpl2(Alpha):
+class BollingerImpl2(BollApha):
 
     def __init__(self, log_returns, bollinger_high, bollinger_low, bollinger_middle, close, raw_data_manager):
         self.log_returns = log_returns

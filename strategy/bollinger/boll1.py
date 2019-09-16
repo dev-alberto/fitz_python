@@ -1,5 +1,6 @@
 from strategy.bollinger.bollinger_alpha import BollApha
 
+
 # -up + down
 class BollingerImpl1(BollApha):
 
@@ -14,4 +15,4 @@ class BollingerImpl1(BollApha):
         
         val = - self.cross_cbl[ii] + self.cross_bhc[ii]
 
-        return super().compute(ii, val)
+        return super().compute_(val)

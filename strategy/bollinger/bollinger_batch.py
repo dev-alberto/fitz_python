@@ -12,6 +12,7 @@ from feature.LogReturns import LogReturns
 from feature.close import Close
 
 
+
 class BollingerBatch(Batch):
 
     def __init__(self, raw_data_manager, ticker=None):

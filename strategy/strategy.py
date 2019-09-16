@@ -1,16 +1,12 @@
 from raw_data_manager import RawDataManager
 from ticker import Ticker
-from strategy.alpha import Alpha
-from feature.feature import EmptyFeature
-
-from strategy.ITrade import ITradeAble
-from strategy.backtest.IBacktest import IBacktestAble
-
+from strategy.ITrade import TradeAble
 from collections import OrderedDict
-from collections.abc import Sequence
+import csv
+
 
 # add book info, as well as other factors
-class AbstractStrategy(Sequence, IBacktestAble, ITradeAble):
+class AbstractStrategy(TradeAble):
 
     def __init__(self, raw_data_manager, alphas, ticker=None, init_alloc=0):
 
@@ -26,23 +22,25 @@ class AbstractStrategy(Sequence, IBacktestAble, ITradeAble):
         self.alphas = alphas
 
         self.ticker = ticker
-        
-        self.features = []
 
-        for alpha in alphas.keys():
-            assert isinstance(alpha, Alpha)
-            ff = alpha.get_features()
-            if ff is not None:
-                for f in ff:
-                    assert isinstance(f, EmptyFeature)
-                    self.features.append(f)
+        self.init_alloc = init_alloc
 
         self.start_time = self.get_earliest_start_time()
 
         self.history = min([a.get_history_len() for a in self.alphas.keys()])
 
+        self.position = init_alloc
+
         self.strategy = OrderedDict()
         self.strategy[self.start_time] = init_alloc
+
+        self.cumulative_pnl = 0
+
+        # LOGS; remove for actual live ...
+        self.csv_path = 'data_test/live/strategies/' + type(self).__name__ + '.csv'
+        self.fieldnames = self.create_strategy_log_get_fieldnames()
+
+        super().__init__(self.strategy)
 
     # for backtest purpose only
     def backfill(self, time_index):
@@ -62,35 +60,66 @@ class AbstractStrategy(Sequence, IBacktestAble, ITradeAble):
 
         return self.strategy
 
+    def create_strategy_log_get_fieldnames(self):
+        alpha_names = [type(list(self.alphas.keys())[i]).__name__ for i in range(len(self.alphas))]
+
+        strategy_file = open(self.csv_path, 'w+')
+
+        r1 = self.raw_data_manager.get_latest()
+
+        for k in alpha_names:
+            r1[k] = self.init_alloc
+
+        r1['strategy'] = 0
+        r1['bid'] = 0
+        r1['ask'] = 0
+        r1['pnl'] = 0
+        r1['position'] = self.init_alloc
+
+        fieldnames = list(r1.keys())
+
+        writer = csv.DictWriter(strategy_file, fieldnames=fieldnames)
+
+        writer.writeheader()
+        writer.writerow(r1)
+
+        return fieldnames
 
     def generate_position(self, ii):
-        self.update_features()
 
-        print('Generating position... at')
-        print(ii)
-        print('Ticker 1 ... ')
-        print(self.ticker.get_bid())
+        self.cumulative_pnl += self.position * (self.raw_data_manager.get_latest()['close'] - self.raw_data_manager.get_latest()['open'])
+
+        log = {'pnl': self.cumulative_pnl}
 
         position = 0
+
         for a, w in self.alphas.items():
-            alloc = a.compute(ii)
+            alloc = a.generate_position(ii)
             position += alloc * w
+
+            log[type(a).__name__] = alloc
 
         if len(self.strategy) > self.history:
             self.strategy.popitem(last=False)
         
         self.strategy[ii] = position
+        self.position = position
+
+        log['position'] = position
+
+        llog = {**log, **self.raw_data_manager.get_latest()}
         
-        print('Position generated, ticker is ... ')
-        print(self.ticker.get_bid())
+        strategy_file = open(self.csv_path, 'a')
+
+        writer = csv.DictWriter(strategy_file, fieldnames=self.fieldnames)
+
+        # compare bid ask with next open maybe ?
+        llog['bid'] = self.ticker.get_bid()
+        llog['ask'] = self.ticker.get_ask()
+
+        writer.writerow(llog)
 
         return position
-
-
-    def update_features(self):
-        for f in self.features:
-            f.update()
-
 
     def get_earliest_start_time(self):
         dates = []
@@ -102,16 +131,3 @@ class AbstractStrategy(Sequence, IBacktestAble, ITradeAble):
 
     def get_main_data_manager(self):
         return self.raw_data_manager
-
-
-    def __eq__(self, other_strategy):
-        return isinstance(other_strategy, AbstractStrategy) and type(self).__name__ == type(other_strategy).__name__
-
-    def __hash__(self):
-        return hash(str(self))
-
-    def __getitem__(self, i):
-        return self.strategy[i]
-
-    def __len__(self):
-        return len(self.strategy)

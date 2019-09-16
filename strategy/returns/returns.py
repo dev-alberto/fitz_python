@@ -12,7 +12,6 @@ class Returns0(Alpha):
 
         super().__init__('BTCUSDT','1m',[raw_data_manager],feature_list=[log_returns])
 
-
     def compute(self, ii):
 
         lr = self.log_returns[ii]
