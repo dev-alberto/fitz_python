@@ -11,7 +11,7 @@ class BollingerImpl1(BollApha):
         super().__init__(raw_data_manager, cross_cbl=cross_cbl, cross_bhc=cross_bhc)
 
     def compute(self, ii):
-        #val = - self.cross_cbl[ii] + self.cross_bhc[ii]
+        # val = - self.cross_cbl[ii] + self.cross_bhc[ii]
         
         val = - self.cross_cbl[ii] + self.cross_bhc[ii]
 

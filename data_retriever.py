@@ -1,9 +1,11 @@
 from datetime import datetime, timezone
 import time
 
+
 def get_unix_time_miliseconds(yy, MM, dd, hh, mm, ss):
     dt = datetime(yy, MM, dd, hour=hh, minute=mm, second=ss).replace(tzinfo=timezone.utc)
     return int(time.mktime(dt.timetuple())*1e3 + dt.microsecond/1e3)
+
 
 def Parse_string_date(date):
     d = date.split('-')
@@ -12,6 +14,7 @@ def Parse_string_date(date):
 
     return datetime(int(d[0]), int(d[1]), int(d[2]), int(d[3]), int(d[4]), int(d[5]))
 
+
 def Get_datetime_from_miliseconds(ms):
     return datetime.utcfromtimestamp(ms//1000).replace(microsecond=ms % 1000*1000)
 
@@ -19,6 +22,7 @@ def Get_datetime_from_miliseconds(ms):
 def Get_all_candles(cursor):
     cursor.execute("SELECT exchange, symbol, period, time, open, high, low, close, volume FROM candlesticks")    
     return cursor.fetchall()
+
 
 # data will be formated to match a list of dicts, where each dict is a row entry 
 def format_data(rows):
@@ -70,6 +74,7 @@ def format_gecko_data(rows, symbol):
 
     return res
 
+
 # input dates like YYYY-MM-DD-HH-MM-SS (for example 2019-7-16-17-0-0)
 def Get_candlesticks_between_dates(cursor, date1, date2, period, symbol, exchange):
     d1 = date1.split('-')
@@ -105,15 +110,16 @@ def Get_all_candlesticks_with_period(cursor, period, symbol, exchange):
     return format_data(cursor.fetchall())
 
 
-def Get_all_gecko_data(cursor, symbol):
-    qq = "select start, open, high, low, close, volume FROM candles_USDT_BTC"
+def Get_all_gecko_data(cursor, symbol, period):
+    qq = "select start, open, high, low, close, volume FROM candles_USDT_BTC order by start asc"
 
     cursor.execute(qq)
 
-    return format_gecko_data(cursor.fetchall(), symbol)
+    data = format_gecko_data(cursor.fetchall(), symbol)
+    return Resample_gecko_data(data, period, symbol)
 
 
-def Get_gecko_between_dates(cursor, symbol, date1, date2):
+def Get_gecko_between_dates(cursor, symbol, period, date1, date2):
     d1 = date1.split('-')
     d2 = date2.split('-')
     assert len(d1) == 6
@@ -129,9 +135,55 @@ def Get_gecko_between_dates(cursor, symbol, date1, date2):
 
     cursor.execute(qq)
 
-    return format_gecko_data(cursor.fetchall(), symbol)
+    data = format_gecko_data(cursor.fetchall(), symbol)
+
+    return Resample_gecko_data(data, period, symbol)
+
 
 # this should provide the data in 5m, 15m etc form. It should be in the same format as data,
 # as to be compatible with our platform
-def Resample_gecko_data(data, period):
-    pass
+def Resample_gecko_data(data, period, symbol):
+    ll = len(data)
+    res = []
+    if period == 1:
+        return data
+
+    for idx in range(1, ll):
+        if (idx + 1) % period == 0:
+            candle = {}
+            start_idx = idx + 1 - period
+            ii = data[start_idx]['time']
+            close = data[idx]['close']
+            open_ = data[start_idx]['open']
+            volume = 0
+            low = data[start_idx]['low']
+            high = data[start_idx]['high']
+            for i in range(start_idx, idx+1):
+                volume += data[i]['volume']
+                if data[i]['low'] < low:
+                    low = data[i]['low']
+                if data[i]['high'] > high:
+                    high = data[i]['high']
+
+            candle['time'] = ii
+            candle['close'] = close
+            candle['open'] = open_
+            candle['volume'] = volume
+            candle['exchange'] = 'binance'
+            candle['symbol'] = symbol
+            pp = str(period) + 'm'
+            if period == 60:
+                pp = '1h'
+            elif period == 240:
+                pp = '4h'
+            elif period == 360:
+                pp = '6h'
+            elif period == 1440:
+                pp = '1d'
+            elif period == 10080:
+                pp = '1w'
+
+            candle['period'] = pp
+            res.append(candle)
+
+    return res

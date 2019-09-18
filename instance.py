@@ -4,6 +4,7 @@ from ticker import Ticker
 import time
 
 from strategy.bollinger.bollinger_strategy import BollingerStrategy
+from strategy.dummy.dummy_strategy import DumbStrategy
 
 
 class Instance:
@@ -15,7 +16,8 @@ class Instance:
 
         self.tickers = {}
 
-        self.bollinger = None
+        # self.bollinger = None
+        self.dumb = None
     
     def set_instance(self, instance):
         self.instance = instance
@@ -29,7 +31,7 @@ class Instance:
             for period in periods:
                 exchange = symbol.get('exchange')
                 ss = symbol.get('symbol')
-                history = symbol.get('history')
+                # history = symbol.get('history')
 
                 raw_manager_key = exchange + ss + period
                 ticker_key = exchange + ss
@@ -39,7 +41,7 @@ class Instance:
                 
                 if raw_manager_key not in self.raw_data_managers:
                     # don't forget to not actually hardcode the 256 lookback
-                    self.raw_data_managers[raw_manager_key] = RawDataManager(exchange, ss, period, 256, history)
+                    self.raw_data_managers[raw_manager_key] = RawDataManager(exchange, ss, period, 256)
 
     # backfill and update should probably be handled by a different object, good enough impl for now
     def backfill(self, exchange, symbol, period, data):
@@ -56,7 +58,10 @@ class Instance:
             ticker_key = exchange + symbol
             assert ticker_key in self.tickers
 
-            self.bollinger = BollingerStrategy(self.raw_data_managers[key], self.tickers[ticker_key])
+            #self.bollinger = BollingerStrategy(self.raw_data_managers[key], self.tickers[ticker_key])
+
+    def instantiate_strategies(self):
+        self.dumb = DumbStrategy(self.raw_data_managers['binanceBTCUSDT1m'], self.raw_data_managers['binanceBTCUSDT5m'])
 
     def update(self, exchange, symbol, period, data):
         key = exchange + symbol + period
@@ -69,9 +74,9 @@ class Instance:
 
         if period == '1m':
             ii = self.raw_data_managers[key].get_live_candle().get('time')
-            position = self.bollinger.generate_position(ii)
+            #position = self.bollinger.generate_position(ii)
 
-            return position
+            #return position
 
     def update_ticker(self, symbol, exchange, ticker):
         key = exchange + symbol

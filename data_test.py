@@ -24,16 +24,16 @@ if __name__ == '__main__':
     # end = Get_datetime_from_miliseconds(data2[-1]['time'])
     # print(start, end)
 
-    # dd = Get_all_gecko_data(cur, symbol)
-    #
-    # start = Get_datetime_from_miliseconds(dd[0]['time'])
-    # end = Get_datetime_from_miliseconds(dd[-1]['time'])
-    #
-    # print(dd[-1]['close'])
-    #
-    # print(start, end)
+    dd = Get_all_gecko_data(cur, symbol, 5)
 
-    dd = Get_gecko_between_dates(cur, symbol, "2019-1-15-0-0-0", "2019-1-16-0-0-0")
+    start = Get_datetime_from_miliseconds(dd[0]['time'])
+    end = Get_datetime_from_miliseconds(dd[-1]['time'])
+
+    # print(dd[-1]['close'])
+
+    print(len(dd))
+
+    print(start, end)
 
     print(len(dd))
 

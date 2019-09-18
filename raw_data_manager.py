@@ -11,7 +11,7 @@ from numpy_ringbuffer import RingBuffer
 # this should receive as params exchange symbol etc ... (hint, maybe the instance.js file should be used, as dependency injection of sorts)
 class RawDataManager:
 
-    def __init__(self, exchange, symbol, period, lookback, history):
+    def __init__(self, exchange, symbol, period, lookback, history=None):
         # self.DF = None
 
         self.exchange = exchange
@@ -64,6 +64,8 @@ class RawDataManager:
 
     def backfill(self, data):
         assert len(data) != 0
+        if self.history is None:
+            self.history = len(data)
 
         time = []
         open = []

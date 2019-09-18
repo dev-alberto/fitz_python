@@ -104,3 +104,4 @@ venv.bak/
 .mypy_cache/
 
 .ideea/
+binance_0.1.db

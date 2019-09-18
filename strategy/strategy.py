@@ -2,6 +2,7 @@ from raw_data_manager import RawDataManager
 from ticker import Ticker
 from strategy.ITrade import TradeAble
 from collections import OrderedDict
+import csv
 
 
 # add book info, as well as other factors
@@ -59,30 +60,30 @@ class AbstractStrategy(TradeAble):
 
         return self.strategy
 
-    # def create_strategy_log_get_fieldnames(self):
-    #     alpha_names = [type(list(self.alphas.keys())[i]).__name__ for i in range(len(self.alphas))]
-    #
-    #     #strategy_file = open(self.csv_path, 'w+')
-    #
-    #     #r1 = self.raw_data_manager.get_latest()
-    #
-    #     for k in alpha_names:
-    #         r1[k] = self.init_alloc
-    #
-    #     r1['strategy'] = 0
-    #     r1['bid'] = 0
-    #     r1['ask'] = 0
-    #     r1['pnl'] = 0
-    #     r1['position'] = self.init_alloc
-    #
-    #     fieldnames = list(r1.keys())
-    #
-    #     writer = csv.DictWriter(strategy_file, fieldnames=fieldnames)
-    #
-    #     writer.writeheader()
-    #     writer.writerow(r1)
-    #
-    #     return fieldnames
+    def create_strategy_log_get_fieldnames(self):
+        alpha_names = [type(list(self.alphas.keys())[i]).__name__ for i in range(len(self.alphas))]
+
+        strategy_file = open(self.csv_path, 'w+')
+
+        r1 = self.raw_data_manager.get_latest()
+
+        for k in alpha_names:
+            r1[k] = self.init_alloc
+
+        r1['strategy'] = 0
+        r1['bid'] = 0
+        r1['ask'] = 0
+        r1['pnl'] = 0
+        r1['position'] = self.init_alloc
+
+        fieldnames = list(r1.keys())
+
+        writer = csv.DictWriter(strategy_file, fieldnames=fieldnames)
+
+        writer.writeheader()
+        writer.writerow(r1)
+
+        return fieldnames
 
     def generate_position(self, ii):
 
@@ -105,17 +106,17 @@ class AbstractStrategy(TradeAble):
         self.position = position
 
         # log['position'] = position
-
+        #
         # llog = {**log, **self.raw_data_manager.get_latest()}
-        
+        #
         # strategy_file = open(self.csv_path, 'a')
-
+        #
         # writer = csv.DictWriter(strategy_file, fieldnames=self.fieldnames)
-
-        # compare bid ask with next open maybe ?
+        #
+        # # compare bid ask with next open maybe ?
         # llog['bid'] = self.ticker.get_bid()
         # llog['ask'] = self.ticker.get_ask()
-
+        #
         # writer.writerow(llog)
 
         return position

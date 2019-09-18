@@ -10,6 +10,7 @@ from strategy.bollinger.bollinger_batch import BollingerBatch
 
 from feature.LogReturns import LogReturns
 from strategy.returns.returns import Returns0
+from strategy.dummy.dummy_strategy import DumbStrategy
 
 from strategy.backtest.simulator import Simulator
 
@@ -27,35 +28,42 @@ if __name__ == '__main__':
     cur = conn.cursor()
 
     symbol = 'BTCUSDT'
-    period = '1m'
+    periods = ['1m', '5m']
     exchange = 'binance'
 
     # data = Get_candlesticks_between_dates(cur, "2019-7-12-17-0-0", "2019-7-16-18-0-0", period,symbol,exchange)
     # data = Get_all_candlesticks_with_period(cur, period,symbol,exchange)
 
-    data = Get_gecko_data(cur, symbol)
-    
-    js = {'symbols': [{'symbol': symbol, 'periods': ['1m'], 'exchange': 'binance', 'state': 'watch', 'history': len(data),'strategies': []}]}
+    data1min = Get_all_gecko_data(cur, symbol, 1)
+    data5min = Get_all_gecko_data(cur, symbol, 5)
+
+    # data1min = Get_gecko_between_dates(cur, symbol, 1, "2019-5-12-17-0-0", "2019-5-12-17-11-0")
+    # data5min = Get_gecko_between_dates(cur, symbol, 5, "2019-5-12-17-0-0", "2019-5-12-17-11-0")
+
+    js = {'symbols': [{'symbol': symbol, 'periods': periods, 'exchange': 'binance', 'state': 'watch', 'history': len(data1min), 'strategies': []}]}
 
     ii = Instance()
     
     db_bridge = DbBridge(ii)
     db_bridge.instantiate(js)
 
-    db_bridge.backfill(exchange, symbol, period, data)
+    db_bridge.backfill(exchange, symbol, '1m', data1min)
+    db_bridge.backfill(exchange, symbol, '5m', data5min)
 
     raw_data_managers = ii.get_raw_data_managers()
 
     btc1min = raw_data_managers['binanceBTCUSDT1m']
-    
 
-    bol_strategy = BollingerStrategy(btc1min)
+    btc5min = raw_data_managers['binanceBTCUSDT5m']
 
-    #bol_batch = BollingerBatch(btc1min)
-
-    backtest = Simulator(bol_strategy, 0.075)
+    dumb = DumbStrategy(btc1min, btc5min)
+    backtest = Simulator(dumb, 0.075)
 
     backtest.plot_pnl()
+
+    #bol_strategy = BollingerStrategy(btc1min)
+
+    #bol_batch = BollingerBatch(btc1min)
 
     # backtest.save_to_disk()
 
