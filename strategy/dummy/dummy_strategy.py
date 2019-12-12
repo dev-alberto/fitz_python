@@ -1,16 +1,27 @@
 from strategy.strategy import AbstractStrategy
 from strategy.dummy.dummy_alpha import DumbAlpha
 from feature.close import Close
+from feature.high import High
+from feature.low import Low
+from feature.open import Open
+
 
 
 class DumbStrategy(AbstractStrategy):
 
-    def __init__(self, raw_data_manager1min, raw_data_manager5min, ticker=None):
+    def __init__(self, raw_data_manager1min,raw_data_manager5min, raw_data_manager1h, raw_data_manager4h, ticker=None):
 
-        cls1 = Close(raw_data_manager1min)
+        clsm = Close(raw_data_manager1min)
         cls5 = Close(raw_data_manager5min)
-
-        dumb_alpha = DumbAlpha(cls1, cls5, raw_data_manager1min)
+        hi1 = High(raw_data_manager1h)
+        low1 = Low(raw_data_manager1h)
+        cls1 = Close(raw_data_manager1h)
+        opn1 = Open(raw_data_manager1h)
+        hi4 = High(raw_data_manager4h)
+        low4 = Low(raw_data_manager4h)
+        cls4 = Close(raw_data_manager4h)
+        opn4 = Open(raw_data_manager4h)
+        dumb_alpha = DumbAlpha(cls5, cls1, opn1, hi1, low1, raw_data_manager1min)
 
         weights = {dumb_alpha: 1}
 

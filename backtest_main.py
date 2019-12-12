@@ -28,17 +28,20 @@ if __name__ == '__main__':
     cur = conn.cursor()
 
     symbol = 'BTCUSDT'
-    periods = ['1m', '5m']
+    periods = ['1m', '5m', '1h', '4h']
     exchange = 'binance'
 
     # data = Get_candlesticks_between_dates(cur, "2019-7-12-17-0-0", "2019-7-16-18-0-0", period,symbol,exchange)
     # data = Get_all_candlesticks_with_period(cur, period,symbol,exchange)
 
-    data1min = Get_all_gecko_data(cur, symbol, 1)
-    data5min = Get_all_gecko_data(cur, symbol, 5)
+    #data1min = Get_all_gecko_data(cur, symbol, 1)
+    #data5min = Get_all_gecko_data(cur, symbol, 5)
 
-    # data1min = Get_gecko_between_dates(cur, symbol, 1, "2019-5-12-17-0-0", "2019-5-12-17-11-0")
-    # data5min = Get_gecko_between_dates(cur, symbol, 5, "2019-5-12-17-0-0", "2019-5-12-17-11-0")
+    data1min = Get_gecko_between_dates(cur, symbol, 1, "2019-1-12-0-0-0", "2019-5-12-0-0-0")
+    data5min = Get_gecko_between_dates(cur, symbol, 5, "2019-1-12-0-0-0", "2019-5-12-0-0-0")
+    data1h = Get_gecko_between_dates(cur, symbol, 60, "2019-1-12-0-0-0", "2019-5-12-0-0-0")
+    data4h = Get_gecko_between_dates(cur, symbol, 240, "2019-1-12-0-0-0", "2019-5-12-0-0-0")
+
 
     js = {'symbols': [{'symbol': symbol, 'periods': periods, 'exchange': 'binance', 'state': 'watch', 'history': len(data1min), 'strategies': []}]}
 
@@ -49,6 +52,9 @@ if __name__ == '__main__':
 
     db_bridge.backfill(exchange, symbol, '1m', data1min)
     db_bridge.backfill(exchange, symbol, '5m', data5min)
+    db_bridge.backfill(exchange, symbol, '1h', data1h)
+    db_bridge.backfill(exchange, symbol, '4h', data4h)
+
 
     raw_data_managers = ii.get_raw_data_managers()
 
@@ -56,7 +62,11 @@ if __name__ == '__main__':
 
     btc5min = raw_data_managers['binanceBTCUSDT5m']
 
-    dumb = DumbStrategy(btc1min, btc5min)
+    btc1h = raw_data_managers['binanceBTCUSDT1h']
+
+    btc4h = raw_data_managers['binanceBTCUSDT4h']
+
+    dumb = DumbStrategy(btc1min, btc5min, btc1h, btc4h)
     backtest = Simulator(dumb, 0.075)
 
     backtest.plot_pnl()

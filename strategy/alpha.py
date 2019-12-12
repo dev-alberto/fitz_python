@@ -39,7 +39,9 @@ class Alpha(TradeAble):
 
         self.cumulative_pnl = 0
 
-        self.change_position_pnl = 0
+        self.change_position_pnl = 0.1
+
+        self.backfillData = self.main_data_manager.get_backfill_df()
 
         # comment once logs no longer needed
         # self.csv_path = 'data_test/live/alphas/' + type(self).__name__ + '.csv'
@@ -73,17 +75,21 @@ class Alpha(TradeAble):
 
     def backfill(self, time_index):
         for ii in time_index:
-            self.alpha[ii] = self.compute(ii)
-
+           self.alpha[ii] = self.generate_position(ii)
+           #self.alpha[ii] = self.compute(ii)
         return self.alpha
 
     def generate_position(self, ii):
 
-        self.update_features()
+        #self.update_features()
 
         # compute pnl before overriding self.allocation,
         # but just after finding last candle close
-        pnl = self.allocation * (self.main_data_manager.get_latest()['close'] - self.main_data_manager.get_latest()['open'])
+        #pnl = self.allocation * (self.main_data_manager.get_latest()['close'] - self.main_data_manager.get_latest()['open'])
+        pnl = self.allocation * (
+                    self.backfillData['close'][ii] - self.backfillData['open'][ii])
+
+        print(pnl)
 
         self.cumulative_pnl += pnl
         self.change_position_pnl += pnl
