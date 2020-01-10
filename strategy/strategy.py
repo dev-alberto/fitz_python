@@ -53,6 +53,7 @@ class AbstractStrategy(TradeAble):
             position = 0
             
             for a, w in self.alphas.items():
+                #print('here')
                 alloc = a[index]
                 position += alloc * w
 

@@ -28,11 +28,10 @@ class DumbAlpha(Alpha):
             valret=-1
 
 
-        #print(self.cumulative_pnl)
+        print(self.cumulative_pnl)
         self.my_change = self.allocation - valret
 
         self.allocation = valret
-
 
         return self.allocation
 

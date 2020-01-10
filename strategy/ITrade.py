@@ -20,6 +20,9 @@ class TradeAble(Sequence, IBacktestAble):
     def __hash__(self):
         return hash(str(self))
 
+    def __str__(self):
+        return str(self.positions)
+
     def get_main_data_manager(self):
         pass
 

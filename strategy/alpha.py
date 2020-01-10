@@ -89,7 +89,7 @@ class Alpha(TradeAble):
         pnl = self.allocation * (
                     self.backfillData['close'][ii] - self.backfillData['open'][ii])
 
-        print(pnl)
+        #print(ii)
 
         self.cumulative_pnl += pnl
         self.change_position_pnl += pnl
