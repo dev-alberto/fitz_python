@@ -130,5 +130,13 @@ class AbstractStrategy(TradeAble):
         
         return max(dates)
 
+    def get_last_time_index(self):
+        dates = []
+        for alpha in self.alphas.keys():
+            dd = alpha.get_last_time_index()
+            dates.append(dd)
+
+        return min(dates)
+
     def get_main_data_manager(self):
         return self.raw_data_manager

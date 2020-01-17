@@ -142,10 +142,22 @@ class EmptyFeature(Sequence):
         # self.save_feature_live()
 
     def __getitem__(self, i):
-        if i in self.feature:
-            return self.feature[i]
+        per_minutes = self.raw_data_manager.get_period_in_minutes()
+
+        rounded_ii = i - (i//60 % per_minutes) * 60
+        print("*********")
+        print(i)
+        print(rounded_ii)
+        # print("***")
+        # print(i)
+        # print(rounded_ii)
+        if rounded_ii in self.feature:
+            return self.feature[rounded_ii]
 
         raise ValueError("Feature timestamp not found")
+
+    def get_last_timestamp(self):
+        return next(reversed(self.feature))
 
     def __len__(self):
         return len(self.feature)

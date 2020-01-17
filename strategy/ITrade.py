@@ -29,5 +29,8 @@ class TradeAble(Sequence, IBacktestAble):
     def get_earliest_start_time(self):
         pass
 
+    def get_last_time_index(self):
+        pass
+
     def backfill(self, time_index):
         pass

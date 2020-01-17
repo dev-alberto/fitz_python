@@ -55,6 +55,12 @@ class RawDataManager:
 
         return dd[(dd.index >= start_time)]
 
+    # backtest purposes
+    def get_backfill_df_between(self, start, end):
+        dd = self.get_backfill_df()
+
+        return dd[(dd.index >= start) & (dd.index <= end)]
+
     def get_backfill_data(self):
         return self.backfill_data.get_data()
 
@@ -83,14 +89,16 @@ class RawDataManager:
 
         for idx, candle in enumerate(data):
             if (self.history - idx) <= self.lookback:
-                time_l.append(get_datetime_from_miliseconds(candle.get('time')))
+                # time_l.append(get_datetime_from_miliseconds(candle.get('time')))
+                time_l.append(candle.get('time'))
                 open_l.append(candle.get('open'))
                 high_l.append(candle.get('high'))
                 low_l.append(candle.get('low'))
                 close_l.append(candle.get('close'))
                 volume_l.append(candle.get('volume'))
 
-            time.append(get_datetime_from_miliseconds(candle.get('time')))
+            # time.append(get_datetime_from_miliseconds(candle.get('time')))
+            time.append(candle.get('time'))
             open.append(candle.get('open'))
             high.append(candle.get('high'))
             low.append(candle.get('low'))
@@ -123,7 +131,8 @@ class RawDataManager:
 
     def update(self, data):
         candle = data[0]
-        tt = get_datetime_from_miliseconds(candle.get('time'))
+        # tt = get_datetime_from_miliseconds(candle.get('time'))
+        tt = candle.get('time')
         candle['time'] = tt
 
         self.live_candle = candle
@@ -135,7 +144,7 @@ class RawDataManager:
         self.live_data.update_close(candle.get('close'))
         self.live_data.update_volume(candle.get('volume'))
 
-    def sava_backfill_to_disk(self,path):
+    def sava_backfill_to_disk(self, path):
         df = self.get_backfill_df()
         df.to_csv(path) 
 
@@ -147,6 +156,23 @@ class RawDataManager:
 
     def get_period(self):
         return self.period
+
+    def get_period_in_minutes(self):
+        per = self.get_period()
+        if per == '1m':
+            return 1
+        elif per == '5m':
+            return 5
+        elif per == '1h':
+            return 60
+        elif per == '2h':
+            return 120
+        elif per == '4h':
+            return 240
+        elif per == '1d':
+            return 1440
+        elif per == '1w':
+            return 10080
 
     def get_symbol(self):
         return self.symbol

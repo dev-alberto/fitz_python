@@ -6,7 +6,7 @@ import csv
 
 class Alpha(TradeAble):
     def __init__(self, pair, period, raw_data_managers,
-                 feature_list=None, model=None, init_alloc=0, history=10000):
+                 feature_list=None, model=None, init_alloc=0, history=1000000):
 
         self.pair = pair
         self.period = period
@@ -39,7 +39,7 @@ class Alpha(TradeAble):
 
         self.cumulative_pnl = 0
 
-        self.change_position_pnl = 0.1
+        self.change_position_pnl = 0
 
         self.backfillData = self.main_data_manager.get_backfill_df()
 
@@ -74,9 +74,10 @@ class Alpha(TradeAble):
     #     return r, fieldnames
 
     def backfill(self, time_index):
+        print(len(time_index))
         for ii in time_index:
-           self.alpha[ii] = self.generate_position(ii)
-           #self.alpha[ii] = self.compute(ii)
+            self.alpha[ii] = self.generate_position(ii)
+           # self.alpha[ii] = self.compute(ii)
         return self.alpha
 
     def generate_position(self, ii):
@@ -86,18 +87,20 @@ class Alpha(TradeAble):
         # compute pnl before overriding self.allocation,
         # but just after finding last candle close
         #pnl = self.allocation * (self.main_data_manager.get_latest()['close'] - self.main_data_manager.get_latest()['open'])
-        pnl = self.allocation * (
-                    self.backfillData['close'][ii] - self.backfillData['open'][ii])
+        #pnl = self.allocation * (
+        #            self.backfillData['close'][ii] - self.backfillData['open'][ii])
 
-        #print(ii)
+        # print('pnl1')
+        # print(pnl)
 
-        self.cumulative_pnl += pnl
-        self.change_position_pnl += pnl
+        #self.cumulative_pnl += pnl
+        #self.change_position_pnl += pnl
+
         prev = self.allocation
 
         position = self.compute(ii)
-
         if prev != position:
+            #print(self.change_position_pnl)
             self.change_position_pnl = 0
 
         if len(self.alpha) > self.history:
@@ -133,6 +136,17 @@ class Alpha(TradeAble):
             dates.append(dd)
 
         return max(dates)
+
+    def get_last_time_index(self):
+        if len(self.feature_list) == 0:
+            return self.main_data_manager.get_backfill_data()['time'][-1]
+
+        dates = []
+        for f in self.feature_list:
+            dd = f.get_last_timestamp()
+            # print(dd.index)
+            dates.append(dd)
+        return min(dates)
 
     def get_main_data_manager(self):
         return self.main_data_manager

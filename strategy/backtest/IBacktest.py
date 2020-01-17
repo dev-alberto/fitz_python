@@ -12,6 +12,10 @@ class IBacktestAble(metaclass=ABCMeta):
         pass
 
     @abstractmethod
+    def get_last_time_index(self):
+        pass
+
+    @abstractmethod
     def get_main_data_manager(self):
         pass
 

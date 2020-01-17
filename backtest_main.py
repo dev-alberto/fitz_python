@@ -42,10 +42,10 @@ if __name__ == '__main__':
     #data1h = Get_gecko_between_dates(cur, symbol, 60, "2019-1-12-0-0-0", "2019-5-12-0-0-0")
     #data4h = Get_gecko_between_dates(cur, symbol, 240, "2019-1-12-0-0-0", "2019-5-12-0-0-0")
 
-    data1min = Get_gecko_between_dates(cur, symbol, 1, "2019-5-6-0-0-0", "2019-5-12-0-0-0")
-    data5min = Get_gecko_between_dates(cur, symbol, 5, "2019-5-6-0-0-0", "2019-5-12-0-0-0")
-    data1h = Get_gecko_between_dates(cur, symbol, 60, "2019-5-6-0-0-0", "2019-5-12-0-0-0")
-    data4h = Get_gecko_between_dates(cur, symbol, 240, "2019-5-6-0-0-0", "2019-5-12-0-0-0")
+    data1min = Get_all_gecko_data(cur, symbol, 1)
+    data5min = Get_all_gecko_data(cur, symbol, 5)
+    data1h = Get_all_gecko_data(cur, symbol, 60)
+    data4h = Get_all_gecko_data(cur, symbol, 240)
 
 
     js = {'symbols': [{'symbol': symbol, 'periods': periods, 'exchange': 'binance', 'state': 'watch', 'history': len(data1min), 'strategies': []}]}

@@ -23,12 +23,15 @@ class Simulator:
         else:
             self.start_time = min_time
 
+        self.end_time = self.backtestAble.get_last_time_index()
+
         self.DF = self.compute_pnl()
 
     def compute_pnl(self):
          
-        data = self.backtestAble.get_main_data_manager().get_backfill_df_from(self.start_time)
+        data = self.backtestAble.get_main_data_manager().get_backfill_df_between(self.start_time, self.end_time)
 
+        # fiecare feature va da last time, ca sa stim unde sa taiem simularea
         self.backtestAble.backfill(data.index)
 
         returns = []
@@ -47,10 +50,11 @@ class Simulator:
             # prev alloc
             cost = (self.cost/100.0) * abs(prev_alloc - prevprev_alloc) * row['open']
 
-            val = prev_alloc * (row['close'] - row['open']) - cost
+            val = prevprev_alloc * (row['close'] - row['open']) # - cost
 
             prevprev_alloc = prev_alloc
             prev_alloc = alloc
+
             
             returns.append(val)
         
@@ -63,10 +67,10 @@ class Simulator:
 
         ret = pd.Series(data=self.DF['returns'], index=self.DF.index)
 
-        hh = ret.resample(period).sum()
+        # hh = ret.resample(period).sum()
 
-        cum = hh.cumsum()
-
+        #cum = hh.cumsum()
+        cum = ret.cumsum()
         cum.plot()
 
         plt.show()

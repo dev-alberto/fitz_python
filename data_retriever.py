@@ -49,13 +49,13 @@ def format_gecko_data(rows, symbol):
     assert len(rows) > 0
 
     res = []
-    prev_time = int(rows[0][0]) * 1000
+    prev_time = int(rows[0][0]) #* 1000
     for r in rows:
         d = {}
         d['exchange'] = 'binance'
         d['symbol'] = symbol
         d['period'] = '1m'
-        d['time'] = int(r[0]) * 1000
+        d['time'] = int(r[0])# * 1000
         d['open'] = r[1]
         d['high'] = r[2]
         d['low'] = r[3]
@@ -67,10 +67,10 @@ def format_gecko_data(rows, symbol):
 
         prev_time = d['time']
         res.append(d)
-
-    for ii in range(len(res) - 1):
+    #print(res)
+    #for ii in range(len(res) - 1):
         # check consecutive time stamps ...
-        assert res[ii + 1]['time'] - res[ii]['time'] == 60000
+    #    assert res[ii + 1]['time'] - res[ii]['time'] == 60000
 
     return res
 
