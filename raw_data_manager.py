@@ -163,6 +163,10 @@ class RawDataManager:
             return 1
         elif per == '5m':
             return 5
+        elif per == '15m':
+            return 15
+        elif per == '30m':
+            return 30
         elif per == '1h':
             return 60
         elif per == '2h':

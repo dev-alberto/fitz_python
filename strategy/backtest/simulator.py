@@ -41,27 +41,53 @@ class Simulator:
         prev_alloc = 0
         prevprev_alloc = 0
 
-        for index, row in data.iterrows():
+        print("****")
+        print(data.loc[data.index[100], "close"])
 
-            alloc = self.backtestAble[index]
+        # for i in range(0, len(data)-1):
+        #
+        #     index = data.index[i]
+        #     next_index = data.index[i+1]
+        #
+        #     alloc = self.backtestAble[next_index]
+        #
+        #     allocs.append(alloc)
+        #     # prev alloc
+        #     cost = (self.cost/100.0) * abs(alloc - prev_alloc) * data.loc[index, "open"]
+        #
+        #     val = alloc * (data.loc[next_index, "close"] - data.loc[next_index, "open"]) # - cost
+        #
+        #     prev_alloc = alloc
+        #     returns.append(val)
 
-            allocs.append(alloc)
-
-            # prev alloc
-            cost = (self.cost/100.0) * abs(prev_alloc - prevprev_alloc) * row['open']
-
-            val = prevprev_alloc * (row['close'] - row['open']) # - cost
-
-            prevprev_alloc = prev_alloc
-            prev_alloc = alloc
-
-            
-            returns.append(val)
-        
+        # for i in range(0, 200-4):
+        #
+        #     index = data.index[i]
+        #     next_index = data.index[i+4]
+        #
+        #     alloc = self.backtestAble[next_index]
+        #
+        #     allocs.append(alloc)
+        #     ret = (data.loc[next_index, "close"] - data.loc[next_index, "open"])
+        #     val = alloc * (data.loc[next_index, "close"] - data.loc[next_index, "open"]) # - cost
+        #     print("*****")
+        #     print("alloc   %s", alloc )
+        #     print("returns   %s", ret)
+        #     returns.append(val)
+        #
+        for i in range(len(data)):
+            returns.append(data.loc[data.index[i], "close"] - data.loc[data.index[i], "open"])
+        # for i in range(4):
+        #     returns.append(0)
+        #     allocs.append(0)
+        #
+        #
         data['returns'] = returns
-        data['allocs'] = allocs
-
-        return data
+        data['returns'].plot()
+        plt.show()
+        # data['allocs'] = allocs
+        #
+        # return data
 
     def plot_pnl(self, period='60T'):
 

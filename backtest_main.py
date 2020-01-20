@@ -28,7 +28,7 @@ if __name__ == '__main__':
     cur = conn.cursor()
 
     symbol = 'BTCUSDT'
-    periods = ['1m', '5m', '1h', '4h']
+    periods = ['1m', '5m', '15m', '30m', '1h', '4h']
     exchange = 'binance'
 
     # data = Get_candlesticks_between_dates(cur, "2019-7-12-17-0-0", "2019-7-16-18-0-0", period,symbol,exchange)
@@ -44,11 +44,14 @@ if __name__ == '__main__':
 
     data1min = Get_all_gecko_data(cur, symbol, 1)
     data5min = Get_all_gecko_data(cur, symbol, 5)
+    data15min = Get_all_gecko_data(cur, symbol, 15)
+    data30min = Get_all_gecko_data(cur, symbol, 30)
     data1h = Get_all_gecko_data(cur, symbol, 60)
     data4h = Get_all_gecko_data(cur, symbol, 240)
 
 
-    js = {'symbols': [{'symbol': symbol, 'periods': periods, 'exchange': 'binance', 'state': 'watch', 'history': len(data1min), 'strategies': []}]}
+    js = {'symbols': [{'symbol': symbol, 'periods': periods, 'exchange': 'binance', 'state': 'watch',
+                       'history': len(data1min), 'strategies': []}]}
 
     ii = Instance()
     
@@ -57,24 +60,34 @@ if __name__ == '__main__':
 
     db_bridge.backfill(exchange, symbol, '1m', data1min)
     db_bridge.backfill(exchange, symbol, '5m', data5min)
+    db_bridge.backfill(exchange, symbol, '15m', data15min)
+    db_bridge.backfill(exchange, symbol, '30m', data30min)
     db_bridge.backfill(exchange, symbol, '1h', data1h)
     db_bridge.backfill(exchange, symbol, '4h', data4h)
 
 
     raw_data_managers = ii.get_raw_data_managers()
 
+    print("************")
+    print(raw_data_managers)
+
     btc1min = raw_data_managers['binanceBTCUSDT1m']
 
     btc5min = raw_data_managers['binanceBTCUSDT5m']
+
+    btc15min = raw_data_managers['binanceBTCUSDT15m']
+
+    btc30min = raw_data_managers['binanceBTCUSDT30m']
 
     btc1h = raw_data_managers['binanceBTCUSDT1h']
 
     btc4h = raw_data_managers['binanceBTCUSDT4h']
 
-    dumb = DumbStrategy(btc1min, btc5min, btc1h, btc4h)
+    dumb = DumbStrategy(btc1min, btc5min, btc15min, btc30min, btc1h, btc4h)
+
     backtest = Simulator(dumb, 0.075)
 
-    backtest.plot_pnl()
+    # backtest.plot_pnl()
 
     #bol_strategy = BollingerStrategy(btc1min)
 

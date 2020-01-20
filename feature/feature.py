@@ -145,9 +145,6 @@ class EmptyFeature(Sequence):
         per_minutes = self.raw_data_manager.get_period_in_minutes()
 
         rounded_ii = i - (i//60 % per_minutes) * 60
-        print("*********")
-        print(i)
-        print(rounded_ii)
         # print("***")
         # print(i)
         # print(rounded_ii)

@@ -5,7 +5,7 @@ import random
 
 class DumbAlpha(Alpha):
 
-    def __init__(self, cls1min, open1min, close5, close1, open1, high1, low1, open5, raw_data_manager):
+    def __init__(self, cls1min, open1min, close5, close1, open1, high1, low1, open5, close15, open15, close30, open30, raw_data_manager):
         self.cls1min = cls1min
         self.open1min = open1min
         self.close5 = close5
@@ -13,8 +13,12 @@ class DumbAlpha(Alpha):
         self.high1 = high1
         self.low1 = low1
         self.open1 = open1
-        self.open5  = open5
-        super().__init__('BTCUSDT', '1m', [raw_data_manager], feature_list=[cls1min, open1min, close5, close1, open1, high1, low1, open5])
+        self.open5 = open5
+        self.open15 = open15
+        self.close15 = close15
+        self.open30 = open30
+        self.close30  = close30
+        super().__init__('BTCUSDT', '1m', [raw_data_manager], feature_list=[cls1min, open1min, close5, close1, open1, high1, low1, open5, close15, open15, close30, open30])
 
     def compute(self, ii):
 
@@ -28,10 +32,10 @@ class DumbAlpha(Alpha):
 
         #print(ii)
 
-        #formula = (self.cls1min[ii] - self.open1min[ii])
-        #formula = self.close1[ii] - self.open1[ii]
+        #formula = self.cls1min[ii] - self.open1min[ii]
+        formula = self.close5[ii] - self.open5[ii]
 
-        formula = self.close5[ii] #- self.open5[ii]
+        #formula = self.close5[ii] - self.open5[ii]
 
         #print("*****")
         #print(self.close1.get_feature())
@@ -44,9 +48,9 @@ class DumbAlpha(Alpha):
         if formula == 0:
             self.allocation = 0
         else:
-            self.allocation = 1 / formula
+            self.allocation = formula
 
-
+        self.allocation=formula
         #predict = random.uniform(0, 1)
         # print(self.change_position_pnl)
 
