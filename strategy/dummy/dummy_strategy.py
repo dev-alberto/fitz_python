@@ -34,8 +34,10 @@ class DumbStrategy(AbstractStrategy):
         opn4 = Open(raw_data_manager4h)
 
         #dumb_alpha = DumbAlpha(cls5, cls1, opn1, hi1, low1, raw_data_manager1min)
-        dumb_alpha = DumbAlpha(clsm, openm, cls5, cls1, opn1, hi1, low1, open5, close15, open15, close30, open30,  raw_data_manager1min)
+        print('instantiating dumb alpha with data manager ... ')
+        print(raw_data_manager5min)
+        dumb_alpha = DumbAlpha(clsm, openm, cls5, cls1, opn1, hi1, low1, open5, close15, open15, close30, open30, cls4,opn4, raw_data_manager4h)
 
         weights = {dumb_alpha: 1}
 
-        super().__init__(raw_data_manager1min, weights, ticker=ticker)
+        super().__init__(raw_data_manager4h, weights, ticker=ticker)

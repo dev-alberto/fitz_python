@@ -146,7 +146,10 @@ class RawDataManager:
 
     def sava_backfill_to_disk(self, path):
         df = self.get_backfill_df()
-        df.to_csv(path) 
+        df.to_csv(path)
+
+    def __str__(self):
+        return "Raw data manager " + str(self.period) + " " + str(self.symbol)
 
     def get_lookback(self):
         return self.lookback

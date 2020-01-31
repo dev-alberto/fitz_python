@@ -20,6 +20,9 @@ class Alpha(TradeAble):
 
         self.raw_data_managers = raw_data_managers
 
+        print('Abstract class raw data managers: ')
+        print(raw_data_managers)
+
         self.main_data_manager = None
 
         for m in raw_data_managers:
@@ -30,6 +33,9 @@ class Alpha(TradeAble):
                 break
 
         assert self.main_data_manager is not None
+
+        print("main data manager in abstract class is... ")
+        print(self.main_data_manager)
 
         self.allocation = init_alloc
 
