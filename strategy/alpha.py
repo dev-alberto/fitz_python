@@ -1,5 +1,6 @@
 from raw_data_manager import RawDataManager
 from strategy.ITrade import TradeAble
+from feature.feature import EmptyFeature
 from collections import OrderedDict
 import csv
 
@@ -156,3 +157,7 @@ class Alpha(TradeAble):
 
     def get_history_len(self):
         return self.history
+
+    def run_data_tests(self):
+        pass
+

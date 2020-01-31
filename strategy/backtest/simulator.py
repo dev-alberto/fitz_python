@@ -41,24 +41,21 @@ class Simulator:
         prev_alloc = 0
         prevprev_alloc = 0
 
-        print("****")
-        print(data.loc[data.index[100], "close"])
+        for i in range(0, len(data)-1):
 
-        # for i in range(0, len(data)-1):
-        #
-        #     index = data.index[i]
-        #     next_index = data.index[i+1]
-        #
-        #     alloc = self.backtestAble[next_index]
-        #
-        #     allocs.append(alloc)
-        #     # prev alloc
-        #     cost = (self.cost/100.0) * abs(alloc - prev_alloc) * data.loc[index, "open"]
-        #
-        #     val = alloc * (data.loc[next_index, "close"] - data.loc[next_index, "open"]) # - cost
-        #
-        #     prev_alloc = alloc
-        #     returns.append(val)
+            index = data.index[i]
+            next_index = data.index[i+1]
+
+            alloc = self.backtestAble[index]
+
+            allocs.append(alloc)
+            # prev alloc
+            cost = (self.cost/100.0) * abs(alloc - prev_alloc) * data.loc[index, "open"]
+
+            val = alloc * (data.loc[next_index, "close"] - data.loc[next_index, "open"]) # - cost
+
+            prev_alloc = alloc
+            returns.append(val)
 
         # for i in range(0, 200-4):
         #
@@ -75,16 +72,14 @@ class Simulator:
         #     print("returns   %s", ret)
         #     returns.append(val)
         #
-        for i in range(len(data)):
-            returns.append(data.loc[data.index[i], "close"] - data.loc[data.index[i], "open"])
+
         # for i in range(4):
         #     returns.append(0)
         #     allocs.append(0)
         #
         #
         data['returns'] = returns
-        data['returns'].plot()
-        plt.show()
+
         # data['allocs'] = allocs
         #
         # return data

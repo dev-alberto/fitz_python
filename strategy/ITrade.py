@@ -34,3 +34,6 @@ class TradeAble(Sequence, IBacktestAble):
 
     def backfill(self, time_index):
         pass
+
+    def run_data_tests(self):
+        pass

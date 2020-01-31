@@ -64,6 +64,8 @@ class EmptyFeature(Sequence):
 
         # self.save_feature()
 
+        self.test_rounded = []
+
         super().__init__()
 
     def get_feature(self):
@@ -142,9 +144,8 @@ class EmptyFeature(Sequence):
         # self.save_feature_live()
 
     def __getitem__(self, i):
-        per_minutes = self.raw_data_manager.get_period_in_minutes()
 
-        rounded_ii = i - (i//60 % per_minutes) * 60
+        rounded_ii = self.get_rounded_index(i)
         # print("***")
         # print(i)
         # print(rounded_ii)
@@ -155,6 +156,10 @@ class EmptyFeature(Sequence):
 
     def get_last_timestamp(self):
         return next(reversed(self.feature))
+
+    def get_rounded_index(self, index):
+        per_minutes = self.raw_data_manager.get_period_in_minutes()
+        return index - (index//60 % per_minutes) * 60
 
     def __len__(self):
         return len(self.feature)

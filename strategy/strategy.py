@@ -140,3 +140,7 @@ class AbstractStrategy(TradeAble):
 
     def get_main_data_manager(self):
         return self.raw_data_manager
+
+    def run_data_tests(self):
+        for alpha in self.alphas.keys():
+            alpha.run_data_tests()
