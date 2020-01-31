@@ -68,9 +68,6 @@ if __name__ == '__main__':
 
     raw_data_managers = ii.get_raw_data_managers()
 
-    print("************")
-    print(raw_data_managers)
-
     btc1min = raw_data_managers['binanceBTCUSDT1m']
 
     btc5min = raw_data_managers['binanceBTCUSDT5m']
@@ -87,7 +84,7 @@ if __name__ == '__main__':
 
     backtest = Simulator(dumb, 0.075)
 
-    # backtest.plot_pnl()
+    backtest.plot_pnl()
 
     #bol_strategy = BollingerStrategy(btc1min)
 

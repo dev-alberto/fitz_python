@@ -139,4 +139,6 @@ class AbstractStrategy(TradeAble):
         return min(dates)
 
     def get_main_data_manager(self):
+        print("function is called with data manager ")
+        print(self.raw_data_manager)
         return self.raw_data_manager
