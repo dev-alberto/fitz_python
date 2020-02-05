@@ -27,14 +27,15 @@ class Simulator:
 
         self.returns = {}
 
-
     def compute_pnl(self):
          
         data = self.backtestAble.get_main_data_manager().get_backfill_df_between(self.start_time, self.end_time)
 
+        print('Start time %s ', self.start_time)
+        print('End time %s ', self.end_time)
+
         # fiecare feature va da last time, ca sa stim unde sa taiem simularea
         self.backtestAble.backfill(data.index)
-
 
         for i in range(0, len(data)-1):
 
@@ -60,7 +61,7 @@ class Simulator:
         ret = pd.Series(ret_d)
         # hh = ret.resample(period).sum()
 
-        #cum = hh.cumsum()
+        # cum = hh.cumsum()
         cum = ret.cumsum()
         cum.plot()
 

@@ -8,15 +8,16 @@ if __name__ == '__main__':
 
     conn2 = Connect('fitz.db')
 
-    cur = conn.cursor()
+    conn3 = Connect('data.db')
 
-    cur2 = conn2.cursor()
+    cur = conn3.cursor()
 
     symbol = 'BTCUSDT'
     period = '1m'
     exchange = 'binance'
 
-    dt = datetime(2019, 10, 10, hour=17, minute=6, second=0).replace(tzinfo=timezone.utc)
+    data3 = Get_all_cata_data(cur, symbol, 5)
+
 
     # print(int(dt.replace(tzinfo=timezone.utc).timestamp()))
 

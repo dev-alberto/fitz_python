@@ -45,6 +45,34 @@ def format_data(rows):
     return res
 
 
+# SELECT time as 'start', close, high, low, open, volumefrom as 'volume'
+#  from aggregate WHERE from_currency='BTC' and to_currency='USD' ORDER BY time ASC
+def format_cata_data(rows):
+    assert len(rows) > 0
+
+    res = []
+
+    for r in rows:
+        d = {}
+        tt = int(r[0])
+
+        # gherla
+        if tt < 1562198400:
+            continue
+        d['exchange'] = 'binance'
+        d['symbol'] = 'BTCUSDT'
+        d['period'] = '1m'
+        d['time'] = tt
+        d['open'] = r[4]
+        d['high'] = r[2]
+        d['low'] = r[3]
+        d['close'] = r[1]
+        d['volume'] = r[5]
+        res.append(d)
+
+    return res
+
+
 def format_gecko_data(rows, symbol):
     assert len(rows) > 0
 
@@ -88,7 +116,7 @@ def Get_candlesticks_between_dates(cursor, date1, date2, period, symbol, exchang
     qq = "select exchange, symbol, period, time, open, high, low, close, volume FROM candlesticks where "
     s1 = " exchange='" + exchange  + "' and "
     s2 = " symbol='" + symbol + "' and "
-    s3  = " period='" + period + "' and "
+    s3 = " period='" + period + "' and "
 
     s4 = " time between " + str(u_d1) + " and " + str(u_d2)
     qq += s1 + s2 + s3 + s4
@@ -116,6 +144,17 @@ def Get_all_gecko_data(cursor, symbol, period):
     cursor.execute(qq)
 
     data = format_gecko_data(cursor.fetchall(), symbol)
+    return Resample_gecko_data(data, period, symbol)
+
+
+def Get_all_cata_data(cursor, symbol, period):
+    qq = "SELECT time as 'start', close, high, low, open, volumefrom as 'volume' " \
+         "from aggregate WHERE from_currency='BTC' and to_currency='USD' ORDER BY time ASC"
+
+    cursor.execute(qq)
+
+    data = format_cata_data(cursor.fetchall())
+
     return Resample_gecko_data(data, period, symbol)
 
 

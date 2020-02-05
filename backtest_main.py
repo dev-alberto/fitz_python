@@ -23,7 +23,10 @@ from feature.LogReturns import LogReturns
 if __name__ == '__main__':
     
     # conn = Connect('fitz.db')
-    conn = Connect('binance_0.1.db')
+    # conn = Connect('binance_0.1.db')
+
+    conn = Connect('data.db')
+
 
     cur = conn.cursor()
 
@@ -42,12 +45,19 @@ if __name__ == '__main__':
     #data1h = Get_gecko_between_dates(cur, symbol, 60, "2019-1-12-0-0-0", "2019-5-12-0-0-0")
     #data4h = Get_gecko_between_dates(cur, symbol, 240, "2019-1-12-0-0-0", "2019-5-12-0-0-0")
 
-    data1min = Get_all_gecko_data(cur, symbol, 1)
-    data5min = Get_all_gecko_data(cur, symbol, 5)
-    data15min = Get_all_gecko_data(cur, symbol, 15)
-    data30min = Get_all_gecko_data(cur, symbol, 30)
-    data1h = Get_all_gecko_data(cur, symbol, 60)
-    data4h = Get_all_gecko_data(cur, symbol, 240)
+    #data1min = Get_all_gecko_data(cur, symbol, 1)
+    #data5min = Get_all_gecko_data(cur, symbol, 5)
+    #data15min = Get_all_gecko_data(cur, symbol, 15)
+    #data30min = Get_all_gecko_data(cur, symbol, 30)
+    #data1h = Get_all_gecko_data(cur, symbol, 60)
+    #data4h = Get_all_gecko_data(cur, symbol, 240)
+
+    data1min = Get_all_cata_data(cur, symbol, 1)
+    data5min = Get_all_cata_data(cur, symbol, 5)
+    data15min = Get_all_cata_data(cur, symbol, 15)
+    data30min = Get_all_cata_data(cur, symbol, 30)
+    data1h = Get_all_cata_data(cur, symbol, 60)
+    data4h = Get_all_cata_data(cur, symbol, 240)
 
 
     js = {'symbols': [{'symbol': symbol, 'periods': periods, 'exchange': 'binance', 'state': 'watch',

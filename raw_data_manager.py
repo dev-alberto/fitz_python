@@ -122,9 +122,9 @@ class RawDataManager:
         #print(len(self.raw.get_close()))
 
         #cc = self.raw.get_close()[-1:]
-        tt = self.live_data.get_data().get('time')[-1:]
+        tt = min(time)
 
-        print("Backfill last candle time: ")
+        print("Backfill first candles time: ")
         print(tt)
         
         #self.DF = self.create_df()

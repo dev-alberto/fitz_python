@@ -146,11 +146,18 @@ class EmptyFeature(Sequence):
     def __getitem__(self, i):
 
         rounded_ii = self.get_rounded_index(i)
-        # print("***")
-        # print(i)
-        # print(rounded_ii)
         if rounded_ii in self.feature:
             return self.feature[rounded_ii]
+        else:
+            print("Feature is... ")
+            print(type(self).__name__)
+            print("Actual index ")
+            print(i)
+            print("Rounded ")
+            print(rounded_ii)
+            print("First keys")
+            kk = list(self.feature.keys())
+            print(kk[0:10])
 
         raise ValueError("Feature timestamp not found")
 
@@ -175,7 +182,8 @@ class EmptyFeature(Sequence):
         return type(self).__name__ + self.raw_data_manager.get_symbol() + self.raw_data_manager.get_period()
 
     def get_history_start_time(self):
-        return self.feature_df.index[0]
+        # return self.feature_df.index[0]
+        return next(iter(self.feature))
 
     def get_DF(self):
         return self.feature_df

@@ -20,8 +20,8 @@ class Alpha(TradeAble):
 
         self.raw_data_managers = raw_data_managers
 
-        print('Abstract class raw data managers: ')
-        print(raw_data_managers)
+        # daprint('Abstract class raw data managers: ')
+        # print(raw_data_managers)
 
         self.main_data_manager = None
 
@@ -34,8 +34,8 @@ class Alpha(TradeAble):
 
         assert self.main_data_manager is not None
 
-        print("main data manager in abstract class is... ")
-        print(self.main_data_manager)
+        # print("main data manager in abstract class is... ")
+        # print(self.main_data_manager)
 
         self.allocation = init_alloc
 
@@ -139,7 +139,8 @@ class Alpha(TradeAble):
         dates = []
         for f in self.feature_list:
             dd = f.get_history_start_time()
-            # print(dd.index)
+            #print("*****")
+            #print(dd)
             dates.append(dd)
 
         return max(dates)
@@ -151,7 +152,7 @@ class Alpha(TradeAble):
         dates = []
         for f in self.feature_list:
             dd = f.get_last_timestamp()
-            # print(dd.index)
+            #print(dd.index)
             dates.append(dd)
         return min(dates)
 
