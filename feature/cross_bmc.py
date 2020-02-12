@@ -4,7 +4,8 @@ import tulipy as ti
 
 class Cross_BMc(EmptyFeature):
 
-    def __init__(self, bollingerM, raw_data_manager,history_l=None):
+    def __init__(self, bollingerM, raw_data_manager, history_l=None):
+
         assert isinstance(bollingerM, BollingerMiddle)
         self.boll = bollingerM
         super().__init__(2, raw_data_manager, features=[bollingerM])

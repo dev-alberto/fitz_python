@@ -5,7 +5,7 @@ import random
 
 class DumbAlpha(Alpha):
 
-    def __init__(self, cls1min, open1min, close5, close1, open1, high1, low1, open5, close15, open15, close30, open30, close4, open4, raw_data_manager):
+    def __init__(self, cls1min, open1min, close5, close1, open1, high1, low1, open5, close15, open15, close30, open30, close4, open4):
         self.cls1min = cls1min
         self.open1min = open1min
         self.close5 = close5
@@ -17,11 +17,11 @@ class DumbAlpha(Alpha):
         self.open15 = open15
         self.close15 = close15
         self.open30 = open30
-        self.close30  = close30
+        self.close30 = close30
         self.close4 = close4
         self.open4 = open4
 
-        super().__init__('BTCUSDT', '4h', [raw_data_manager], feature_list=[cls1min, open1min, close5, close1, open1, high1, low1, open5, close15, open15, close30, open30,close4,open4])
+        super().__init__(feature_list=[cls1min, open1min, close5, close1, open1, high1, low1, open5, close15, open15, close30, open30,close4,open4])
 
     def compute(self, ii):
 

@@ -50,13 +50,13 @@ class BollingerStrategy(AbstractStrategy):
 
         cross_blc = Cross_BLc(bl, raw_data_manager)
 
-        bollinger1 = BollingerImpl1(cross_cbl, cross_bhc, raw_data_manager)
+        bollinger1 = BollingerImpl1(cross_cbl, cross_bhc)
 
-        bollinger2 = BollingerImpl2(log_r, bh, bl, bm, close, raw_data_manager)
+        bollinger2 = BollingerImpl2(log_r, bh, bl, bm, close)
 
-        bollinger3 = BollingerImpl3(cross_cbl, cross_bhc, cross_cbh, cross_blc, raw_data_manager)
+        bollinger3 = BollingerImpl3(cross_cbl, cross_bhc, cross_cbh, cross_blc)
 
-        # bollinger4 = BollingerImpl4(cross_cbl, cross_bhc, cross_cbh, cross_blc, cross_bmc, cross_cbm, raw_data_manager)
+        # bollinger4 = BollingerImpl4(cross_cbl, cross_bhc, cross_cbh, cross_blc, cross_bmc, cross_cbm)
 
         #weights = {bollinger1: 0.33, bollinger2: 0.34, bollinger3: 0.33}
 

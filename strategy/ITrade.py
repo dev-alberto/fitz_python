@@ -23,8 +23,8 @@ class TradeAble(Sequence, IBacktestAble):
     def __str__(self):
         return str(self.positions)
 
-    def get_main_data_manager(self):
-        pass
+    #def get_main_data_manager(self):
+    #    pass
 
     def get_earliest_start_time(self):
         pass

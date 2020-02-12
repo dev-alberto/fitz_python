@@ -8,6 +8,8 @@ data.db
 # C extensions
 *.so
 
+data_test/
+
 # Distribution / packaging
 .Python
 build/

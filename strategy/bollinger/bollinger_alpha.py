@@ -2,7 +2,7 @@ from strategy.alpha import Alpha
 
 
 class BollApha(Alpha):
-    def __init__(self, raw_data_manager, cross_cbl=None, cross_blc=None, cross_cbm=None,
+    def __init__(self, cross_cbl=None, cross_blc=None, cross_cbm=None,
                  cross_bmc=None, cross_cbh=None, cross_bhc=None):
 
         f_list = []
@@ -25,8 +25,7 @@ class BollApha(Alpha):
         if cross_bhc is not None:
             f_list.append(cross_bhc)
 
-        super().__init__(pair='BTCUSDT', period=raw_data_manager.get_period(), raw_data_managers=[raw_data_manager],
-                         feature_list=f_list, model=None, init_alloc=0)
+        super().__init__(feature_list=f_list, model=None, init_alloc=0)
 
     def compute_(self, feature_val):
 

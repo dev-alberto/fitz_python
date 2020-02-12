@@ -1,6 +1,7 @@
 import pandas as pd
 from data_retriever import Parse_string_date
 from strategy.backtest.IBacktest import IBacktestAble
+from raw_data_manager import RawDataManager
 
 import matplotlib.pyplot as plt
 
@@ -8,12 +9,15 @@ import matplotlib.pyplot as plt
 # stats need to be added; needs to work with alpha/strategy; create extra level of abstraction
 class Simulator:
 
-    def __init__(self, backtestAble, cost, start_time=None):
+    def __init__(self, backtestAble, raw_data_manager, cost, start_time=None):
+
         assert isinstance(backtestAble, IBacktestAble)
+        assert isinstance(raw_data_manager, RawDataManager)
 
         self.backtestAble = backtestAble
         self.cost = cost
-        
+        self.raw_data_manager = raw_data_manager
+
         min_time = backtestAble.get_earliest_start_time()
 
         if start_time is not None: 
@@ -29,7 +33,7 @@ class Simulator:
 
     def compute_pnl(self):
          
-        data = self.backtestAble.get_main_data_manager().get_backfill_df_between(self.start_time, self.end_time)
+        data = self.raw_data_manager.get_backfill_df_between(self.start_time, self.end_time)
 
         print('Start time %s ', self.start_time)
         print('End time %s ', self.end_time)
@@ -46,7 +50,7 @@ class Simulator:
                 self.returns[index] = 0
                 continue
 
-            alloc = self.backtestAble[next_index]
+            alloc = self.backtestAble[index]
 
             ret = (data.loc[next_index, "close"] - data.loc[index, "close"])
             val = alloc * ret #(data.loc[next_index, "close"] - data.loc[next_index, "open"]) # - cost

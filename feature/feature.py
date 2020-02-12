@@ -7,10 +7,11 @@ import numpy as np
 import pandas as pd
 import csv
 import os
+import inspect
 
 
 class EmptyFeature(Sequence):
-    def __init__(self, lookback, raw_data_manager, backfill=True, history_lengh=None, features=None):
+    def __init__(self, lookback, raw_data_manager, name="", backfill=True, history_lengh=None, features=None):
         raw_data_length = raw_data_manager.get_history()
 
         # kind of spaghetti logic here to for feature history length but the gist is this:
@@ -62,6 +63,8 @@ class EmptyFeature(Sequence):
 
         self.live_save_path = 'data_test/live/features/' + type(self).__name__ + '.csv'
 
+        self.backtest_path = 'data_test/features/' + self.__str__() + name + '.csv'
+
         # self.save_feature()
 
         self.test_rounded = []
@@ -108,8 +111,8 @@ class EmptyFeature(Sequence):
         data = self.raw_data_manager.get_backfill_data()
         ff = self.compute(data)[-self.history_lengh:]
 
-        # print(len(ff))
-        # print(self.history_lengh)
+        print(len(ff))
+        print(self.history_lengh)
 
         assert len(ff) == self.history_lengh
 
@@ -208,10 +211,10 @@ class EmptyFeature(Sequence):
         self.feature_df.to_csv('data_test/features/' + name)
 
     def save_feature(self):
-        if os.path.isfile(self.live_save_path):
+        if os.path.isfile(self.backtest_path):
             return
 
-        feature_file = open(self.live_save_path, 'w+')
+        feature_file = open(self.backtest_path, 'w+')
 
         writer = csv.DictWriter(feature_file, fieldnames=['time', 'value'])
         writer.writeheader()

@@ -4,7 +4,7 @@ import random
 
 class BollingerImpl2(Alpha):
 
-    def __init__(self, log_returns, bollinger_high, bollinger_low, bollinger_middle, close, raw_data_manager):
+    def __init__(self, log_returns, bollinger_high, bollinger_low, bollinger_middle, close):
         self.log_returns = log_returns
         self.bollinger_high = bollinger_high
         self.bollinger_low = bollinger_low
@@ -12,7 +12,7 @@ class BollingerImpl2(Alpha):
         self.close = close
        # assert isinstance(log_returns, LogReturns)
 
-        super().__init__('BTCUSDT','1m',[raw_data_manager], feature_list=[log_returns, bollinger_high, bollinger_low, bollinger_middle, close])
+        super().__init__(feature_list=[log_returns, bollinger_high, bollinger_low, bollinger_middle, close])
 
     def compute(self, ii):
 

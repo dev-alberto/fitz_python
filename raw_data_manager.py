@@ -31,7 +31,7 @@ class RawDataManager:
     # this is the format that is exposed,  for feature creation
     def get_live_data(self):
         r = {}
-        for k,v in self.live_data.get_data().items():
+        for k, v in self.live_data.get_data().items():
             r[k] = np.array(v)
 
         return r
@@ -122,10 +122,12 @@ class RawDataManager:
         #print(len(self.raw.get_close()))
 
         #cc = self.raw.get_close()[-1:]
-        tt = min(time)
+        #tt = min(time)
 
-        print("Backfill first candles time: ")
-        print(tt)
+        #print("Backfill first candles time: ")
+        #print(tt)
+
+        print("Data len ", len(time))
         
         #self.DF = self.create_df()
 

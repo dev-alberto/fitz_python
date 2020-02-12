@@ -6,33 +6,34 @@ import csv
 
 
 class Alpha(TradeAble):
-    def __init__(self, pair, period, raw_data_managers,
-                 feature_list=None, model=None, init_alloc=0, history=1000000):
+    def __init__(self, feature_list=None, model=None, init_alloc=0, history=1000000):
 
-        self.pair = pair
-        self.period = period
+        assert feature_list is not None
+        assert len(feature_list) > 0
+        # self.pair = pair
+        # self.period = period
         self.model = model
         self.feature_list = feature_list
 
         self.history = history
 
-        assert len(raw_data_managers) > 0
+        # assert len(raw_data_managers) > 0
 
-        self.raw_data_managers = raw_data_managers
+        #self.raw_data_managers = raw_data_managers
 
         # daprint('Abstract class raw data managers: ')
         # print(raw_data_managers)
 
-        self.main_data_manager = None
-
-        for m in raw_data_managers:
-            assert isinstance(m, RawDataManager)
-            # exchange should also be here
-            if period == m.get_period() and pair == m.get_symbol():
-                self.main_data_manager = m
-                break
-
-        assert self.main_data_manager is not None
+        # self.main_data_manager = None
+        #
+        # for m in raw_data_managers:
+        #     assert isinstance(m, RawDataManager)
+        #     # exchange should also be here
+        #     if period == m.get_period() and pair == m.get_symbol():
+        #         self.main_data_manager = m
+        #         break
+        #
+        # assert self.main_data_manager is not None
 
         # print("main data manager in abstract class is... ")
         # print(self.main_data_manager)
@@ -48,7 +49,7 @@ class Alpha(TradeAble):
 
         self.change_position_pnl = 0
 
-        self.backfillData = self.main_data_manager.get_backfill_df()
+        # self.backfillData = self.main_data_manager.get_backfill_df()
 
         # comment once logs no longer needed
         # self.csv_path = 'data_test/live/alphas/' + type(self).__name__ + '.csv'
@@ -107,7 +108,7 @@ class Alpha(TradeAble):
 
         position = self.compute(ii)
         if prev != position:
-            #print(self.change_position_pnl)
+            # print(self.change_position_pnl)
             self.change_position_pnl = 0
 
         if len(self.alpha) > self.history:
@@ -133,8 +134,6 @@ class Alpha(TradeAble):
                 f.update()
 
     def get_earliest_start_time(self):
-        if len(self.feature_list) == 0:
-            return self.main_data_manager.get_backfill_data()['time'][0]
 
         dates = []
         for f in self.feature_list:
@@ -146,8 +145,6 @@ class Alpha(TradeAble):
         return max(dates)
 
     def get_last_time_index(self):
-        if len(self.feature_list) == 0:
-            return self.main_data_manager.get_backfill_data()['time'][-1]
 
         dates = []
         for f in self.feature_list:
@@ -156,8 +153,8 @@ class Alpha(TradeAble):
             dates.append(dd)
         return min(dates)
 
-    def get_main_data_manager(self):
-        return self.main_data_manager
+    # def get_main_data_manager(self):
+    #     return self.main_data_manager
 
     def get_features(self):
         return self.feature_list

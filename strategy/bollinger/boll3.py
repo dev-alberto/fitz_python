@@ -4,13 +4,13 @@ from strategy.bollinger.bollinger_alpha import BollApha
 # -up + down - sup + sdown
 class BollingerImpl3(BollApha):
 
-    def __init__(self, cross_cbl, cross_bhc, cross_cbh, cross_blc, raw_data_manager):
+    def __init__(self, cross_cbl, cross_bhc, cross_cbh, cross_blc):
         self.cross_bhc = cross_bhc
         self.cross_cbl = cross_cbl
         self.cross_cbh = cross_cbh
         self.cross_blc = cross_blc
         
-        super().__init__(raw_data_manager, cross_cbl=cross_cbl, cross_bhc=cross_bhc,cross_cbh=cross_cbh,cross_blc=cross_blc)
+        super().__init__(cross_cbl=cross_cbl, cross_bhc=cross_bhc, cross_cbh=cross_cbh, cross_blc=cross_blc)
 
     def compute(self, ii):
         
