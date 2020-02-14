@@ -1,6 +1,7 @@
 from feature.feature import EmptyFeature
 import tulipy as ti
 
+
 class BollingerLow(EmptyFeature):
 
     def __init__(self, lookback, std,  raw_data_manager, history_lengh=None):

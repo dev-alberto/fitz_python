@@ -5,7 +5,7 @@ import numpy as np
 class Volume(EmptyFeature):
 
     def __init__(self, raw_data_manager, history_lengh=None):
-        super().__init__(2, raw_data_manager, history_lengh=history_lengh)
+        super().__init__(1, raw_data_manager, history_lengh=history_lengh)
 
     def compute(self, data_dict):
         

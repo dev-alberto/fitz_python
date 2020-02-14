@@ -1,6 +1,7 @@
 from feature.feature import EmptyFeature
 import tulipy as ti
 
+
 class Vwap(EmptyFeature):
 
     def __init__(self, lookback, raw_data_manager, history_lengh=None):

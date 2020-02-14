@@ -2,13 +2,13 @@ from strategy.batch import Batch
 
 from strategy.bollinger.boll2 import BollingerImpl2
 
-from feature.cross_cbl import Cross_cBL
-from feature.cross_bhc import Cross_BHc
+from feature.crosscbl import CrossCbl
+from feature.crossbhc import CrossBHc
 
-from feature.bollinger_low import BollingerLow
-from feature.bollinger_high import BollingerHigh
-from feature.bollinger_middle import BollingerMiddle
-from feature.LogReturns import LogReturns
+from feature.bollingerlow import BollingerLow
+from feature.bollingerhigh import BollingerHigh
+from feature.bollingermiddle import BollingerMiddle
+from feature.logreturns import LogReturns
 from feature.close import Close
 
 
@@ -34,9 +34,9 @@ class BollingerBatch(Batch):
 
                 log_r = LogReturns(5, raw_data_manager)
 
-                cross_cbl = Cross_cBL(bl, raw_data_manager)
+                cross_cbl = CrossCbl(bl, raw_data_manager)
 
-                cross_bhc = Cross_BHc(bh, raw_data_manager)
+                cross_bhc = CrossBHc(bh, raw_data_manager)
 
                 bollinger_alpha = BollingerImpl2(log_r, bh, bl, bm, close, raw_data_manager)
 

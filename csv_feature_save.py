@@ -7,12 +7,12 @@ from instance import Instance
 from data_retriever import *
 
 from feature.close import Close
-from feature.bollinger_high import BollingerHigh
+from feature.bollingerhigh import BollingerHigh
 from feature.returns import Returns
 from feature.ema import Ema
 from feature.sma import Sma
-from feature.stoch_rsi_d import StochRsiD
-from feature.stoch_rsi_h import StochRsiH
+from feature.stochrsid import StochRsiD
+from feature.stochrsih import StochRsiH
 from  feature.rsi import Rsi
 
 if __name__ == '__main__':
@@ -53,7 +53,7 @@ if __name__ == '__main__':
 
     btc1min = raw_data_managers['binanceBTCUSDT1m']
 
-    #btc5min = raw_data_managers['binanceBTCUSDT5m']
+    btc5min = raw_data_managers['binanceBTCUSDT5m']
 
     btc15min = raw_data_managers['binanceBTCUSDT15m']
 
@@ -63,36 +63,42 @@ if __name__ == '__main__':
 
     btc4h = raw_data_managers['binanceBTCUSDT4h']
 
-    managers = [btc1min, btc15min, btc30min, btc1h, btc4h]
+    managers = [btc1min, btc5min, btc15min, btc30min, btc1h, btc4h]
 
-    for manager in managers:
-        sma_lookbacks = [10, 30, 50, 100, 200]
-        ema_lookbacks = [21, 55, 100, 200]
-        rsi_lookbacks = [14, 21, 60]
-        stoch_rsi = [(5, 3, 3), (21, 14, 14), (14, 3, 3)]
 
-        for i in sma_lookbacks:
-            sma = Sma(i, manager)
-            sma.save_feature()
 
-        for i in ema_lookbacks:
-            ema = Ema(i, manager)
-            ema.save_feature()
 
-        for i in rsi_lookbacks:
-            rsi = Rsi(i, manager)
-            rsi.save_feature()
+    #
+    # for manager in managers:
+    #     sma_lookbacks = [10, 30, 50, 100, 200]
+    #     ema_lookbacks = [21, 55, 100, 200]
+    #     rsi_lookbacks = [14, 21, 60]
+    #     stoch_rsi = [(5, 3, 3), (21, 14, 14), (14, 3, 3)]
+    #
+    #     for i in sma_lookbacks:
+    #         sma = Sma(i, manager)
+    #         sma.save_feature()
+    #
+    #     for i in ema_lookbacks:
+    #         ema = Ema(i, manager)
+    #         ema.save_feature()
+    #
+    #     for i in rsi_lookbacks:
+    #         rsi = Rsi(i, manager)
+    #         rsi.save_feature()
+    #
+    #     for i in stoch_rsi:
+    #         stochd = StochRsiD(i[0],i[1],i[2], manager)
+    #         stochh = StochRsiH(i[0],i[1],i[2], manager)
+    #         stochd.save_feature()
+    #         stochh.save_feature()
+    #
+    #     cls = Close(manager)
+    #     ret = Returns(manager)
+    #     cls.save_feature()
+    #     cls.save_feature()
 
-        for i in stoch_rsi:
-            stochd = StochRsiD(i[0],i[1],i[2], manager)
-            stochh = StochRsiH(i[0],i[1],i[2], manager)
-            stochd.save_feature()
-            stochh.save_feature()
 
-        cls = Close(manager)
-        ret = Returns(manager)
-        cls.save_feature()
-        cls.save_feature()
 
 
 

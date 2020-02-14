@@ -10,13 +10,13 @@ from raw_data_manager import RawDataManager
 
 from feature.close import Close
 
-from feature.bollinger_high import *
-from feature.bollinger_low import *
-from feature.cross_bhc import *
-from feature.cross_cbl import *
+from feature.bollingerhigh import *
+from feature.bollingerlow import *
+from feature.crossbhc import *
+from feature.crosscbl import *
 
 
-from feature.LogReturns import LogReturns
+from feature.logreturns import LogReturns
 
 from data_retriever import *
 
@@ -67,7 +67,7 @@ if __name__ == '__main__':
 
     #bh = BollingerHigh(90, 3, btc1min)
 
-    #cross_cbl = Cross_cBL(bl, btc1min)
+    #cross_cbl = CrossCbl(bl, btc1min)
 
     #cross_bhc = Cross_BHc(bh, btc1min)
 

@@ -1,11 +1,11 @@
 from feature.feature import EmptyFeature
-from feature.bollinger_low import BollingerLow
+from feature.bollingerlow import BollingerLow
 import tulipy as ti
 
 
-class Cross_BLc(EmptyFeature):
+class CrossCbl(EmptyFeature):
 
-    def __init__(self, bollingerL, raw_data_manager, history_l=None):
+    def __init__(self, bollingerL, raw_data_manager,history_l=None):
         assert isinstance(bollingerL, BollingerLow)
         self.boll = bollingerL
 
@@ -17,4 +17,4 @@ class Cross_BLc(EmptyFeature):
 
         f1 = self.boll.get_numpy()
 
-        return ti.crossover(f1, close)
+        return ti.crossover(close, f1)

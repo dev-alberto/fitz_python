@@ -1,0 +1,12 @@
+Alpha1:
+  Features:
+    Ema:
+      periods: ['1m','5m','15m']
+      lookback: [20,30,50,100]
+
+    Rsi:
+      periods: ['1m','5m','15m']
+      lookback: [14, 20]
+
+    CrossBHc:
+      periods: ['1m','5m']

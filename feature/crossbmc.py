@@ -1,8 +1,9 @@
 from feature.feature import EmptyFeature
-from feature.bollinger_middle import BollingerMiddle
+from feature.bollingermiddle import BollingerMiddle
 import tulipy as ti
 
-class Cross_BMc(EmptyFeature):
+
+class CrossBmc(EmptyFeature):
 
     def __init__(self, bollingerM, raw_data_manager, history_l=None):
 

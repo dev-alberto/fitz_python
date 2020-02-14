@@ -1,8 +1,9 @@
 from feature.feature import EmptyFeature
-from feature.bollinger_high import BollingerHigh
+from feature.bollingerhigh import BollingerHigh
 import tulipy as ti
 
-class Cross_cBH(EmptyFeature):
+
+class CrossBHc(EmptyFeature):
 
     def __init__(self, bollingerH, raw_data_manager, history_l=None):
         
@@ -16,4 +17,4 @@ class Cross_cBH(EmptyFeature):
         close = data_dict['close']
         f1 = self.boll.get_numpy()
 
-        return ti.crossover(close, f1)
+        return ti.crossover(f1, close)

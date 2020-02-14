@@ -4,18 +4,18 @@ from strategy.bollinger.boll3 import BollingerImpl3
 from strategy.bollinger.boll4 import BollingerImpl4
 from raw_data_manager import RawDataManager
 
-from feature.cross_cbl import Cross_cBL
-from feature.cross_bhc import Cross_BHc
-from  feature.LogReturns import LogReturns
-from feature.cross_cbh import Cross_cBH
-from feature.cross_bmc import Cross_BMc
-from feature.cross_cbm import Cross_cBM
+from feature.crosscbl import CrossCbl
+from feature.crossbhc import CrossBHc
+from  feature.logreturns import LogReturns
+from feature.crosscbh import CrossCbh
+from feature.crossbmc import CrossBmc
+from feature.crosscbm import CrossCbm
 from  feature.close import Close
-from feature.cross_blc import Cross_BLc
+from feature.crossblc import CrossBLc
 
-from feature.bollinger_low import BollingerLow
-from feature.bollinger_high import BollingerHigh
-from feature.bollinger_middle import BollingerMiddle
+from feature.bollingerlow import BollingerLow
+from feature.bollingerhigh import BollingerHigh
+from feature.bollingermiddle import BollingerMiddle
 
 from strategy.strategy import AbstractStrategy
 
@@ -34,21 +34,21 @@ class BollingerStrategy(AbstractStrategy):
 
         bm = BollingerMiddle(90, 3, raw_data_manager)
 
-        cross_cbl = Cross_cBL(bl, raw_data_manager)
+        cross_cbl = CrossCbl(bl, raw_data_manager)
 
-        cross_bhc = Cross_BHc(bh, raw_data_manager)
+        cross_bhc = CrossBHc(bh, raw_data_manager)
 
-        cross_cbh = Cross_cBH(bh, raw_data_manager)
+        cross_cbh = CrossCbh(bh, raw_data_manager)
 
         close = Close(raw_data_manager)
 
-        # cross_bmc = Cross_BMc(bm, raw_data_manager)
+        # cross_bmc = CrossBmc(bm, raw_data_manager)
 
-        # cross_cbm = Cross_cBM(bm, raw_data_manager)
+        # cross_cbm = CrossCbm(bm, raw_data_manager)
 
         log_r = LogReturns(5, raw_data_manager)
 
-        cross_blc = Cross_BLc(bl, raw_data_manager)
+        cross_blc = CrossBLc(bl, raw_data_manager)
 
         bollinger1 = BollingerImpl1(cross_cbl, cross_bhc)
 
