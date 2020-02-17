@@ -11,7 +11,4 @@ class Rsi(EmptyFeature):
     def compute(self, data_dict):
         close = data_dict.get('close')
 
-        print("RSI lookback... ", self.lookback)
-        print("RSI len... ", len(ti.rsi(close, self.lookback)))
-
         return ti.rsi(close, self.per)

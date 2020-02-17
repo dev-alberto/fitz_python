@@ -1,6 +1,7 @@
 from rpc.bridge_interface import IBridge
 from instance import Instance
 
+
 # there should probably be an interface for this, to achieve dependecy inversion.
 # Testing features without needing to connect to the node JS portion should be possible
 class DbBridge(IBridge):

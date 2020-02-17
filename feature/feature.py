@@ -116,7 +116,7 @@ class EmptyFeature(Sequence):
 
         assert len(ff) == self.history_lengh
 
-        self.feature_df[type(self).__name__] = ff
+        self.feature_df[str(self)] = ff
 
         self.populate_feature()
 
@@ -192,7 +192,7 @@ class EmptyFeature(Sequence):
         return self.feature_df
 
     def get_TS(self):
-        return self.feature_df[type(self).__name__]
+        return self.feature_df[str(self)]
 
     def get_numpy(self):
         return self.feature_numpy

@@ -40,8 +40,8 @@ class Instance:
                     self.tickers[ticker_key] = Ticker(256, exchange, symbol, 0, 0, int(round(time.time() * 1000)))
                 
                 if raw_manager_key not in self.raw_data_managers:
-                    # don't forget to not actually hardcode the 256 lookback
-                    self.raw_data_managers[raw_manager_key] = RawDataManager(exchange, ss, period, 256)
+                    # don't forget to not actually hardcode the 500 lookback
+                    self.raw_data_managers[raw_manager_key] = RawDataManager(exchange, ss, period, 500)
 
     # backfill and update should probably be handled by a different object, good enough impl for now
     def backfill(self, exchange, symbol, period, data):

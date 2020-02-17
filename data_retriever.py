@@ -206,6 +206,8 @@ def Resample_gecko_data(data, period, symbol):
 
             candle['time'] = ii
             candle['close'] = close
+            candle['high'] = high
+            candle['low'] = low
             candle['open'] = open_
             candle['volume'] = volume
             candle['exchange'] = 'binance'
@@ -213,10 +215,14 @@ def Resample_gecko_data(data, period, symbol):
             pp = str(period) + 'm'
             if period == 60:
                 pp = '1h'
+            if period == 120:
+                pp = '2h'
             elif period == 240:
                 pp = '4h'
             elif period == 360:
                 pp = '6h'
+            elif period == 720:
+                pp = '12h'
             elif period == 1440:
                 pp = '1d'
             elif period == 10080:

@@ -8,5 +8,11 @@ Alpha1:
       periods: ['1m','5m','15m']
       lookback: [14, 20]
 
-    CrossBHc:
+    High:
       periods: ['1m','5m']
+
+    StochRsiD:
+      periods: ['1h','4h']
+      p1: [10, 5]
+      p2: [2, 5]
+      p3: [5]

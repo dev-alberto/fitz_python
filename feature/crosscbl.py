@@ -5,7 +5,7 @@ import tulipy as ti
 
 class CrossCbl(EmptyFeature):
 
-    def __init__(self, bollingerL, raw_data_manager,history_l=None):
+    def __init__(self, bollingerL, raw_data_manager, history_l=None):
         assert isinstance(bollingerL, BollingerLow)
         self.boll = bollingerL
 

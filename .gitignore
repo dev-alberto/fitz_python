@@ -5,6 +5,7 @@ __pycache__/
 
 data_cata.db
 data.db
+binance_0.1*
 # C extensions
 *.so
 
