@@ -5,7 +5,7 @@ import tulipy as ti
 class BollingerMiddle(EmptyFeature):
 
     def __init__(self, lookback, std,  raw_data_manager, history_lengh=None):
-        
+        self.per = lookback
         self.std = std
 
         super().__init__(lookback, raw_data_manager, history_lengh=history_lengh)
@@ -14,4 +14,4 @@ class BollingerMiddle(EmptyFeature):
         
         close = data_dict.get('close')
 
-        return ti.bbands(close, self.lookback, self.std)[1]
+        return ti.bbands(close, self.per, self.std)[1]

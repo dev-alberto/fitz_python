@@ -26,12 +26,18 @@ from feature.nvi import Nvi
 from feature.pvi import Pvi
 from feature.close import Close
 from feature.bollingerhigh import BollingerHigh
+from feature.bollingermiddle import BollingerMiddle
+from feature.bollingerlow import BollingerLow
 from feature.returns import Returns
 from feature.ema import Ema
 from feature.sma import Sma
 from feature.stochrsid import StochRsiD
 from feature.stochrsih import StochRsiH
-from  feature.rsi import Rsi
+from feature.rsi import Rsi
+from feature.vwap import Vwap
+from feature.crossbhc import CrossBHc
+from feature.crossbmc import CrossBmc
+from feature.crossblc import CrossBLc
 
 
 def add_column_to_pandas(dataF, ff, args=None):
@@ -45,9 +51,9 @@ def add_column_to_pandas(dataF, ff, args=None):
 
 if __name__ == '__main__':
     # conn = Connect('fitz.db')
-    conn = Connect('binance_0.1.db')
+    # conn = Connect('binance_0.1.db')
 
-    #conn = Connect('data.db')
+    conn = Connect('data.db')
 
     cur = conn.cursor()
 
@@ -55,24 +61,25 @@ if __name__ == '__main__':
     periods = ['1m', '3m', '5m', '15m', '30m', '1h', '4h', '6h', '12h']
     exchange = 'binance'
 
-    # data1min = Get_all_cata_data(cur, symbol, 1)
-    # data3min = Get_all_cata_data(cur, symbol, 3)
-    # data5min = Get_all_cata_data(cur, symbol, 5)
-    # data15min = Get_all_cata_data(cur, symbol, 15)
-    # data30min = Get_all_cata_data(cur, symbol, 30)
-    # data1h = Get_all_cata_data(cur, symbol, 60)
-    # data4h = Get_all_cata_data(cur, symbol, 240)
-    # data6h = Get_all_cata_data(cur, symbol, 360)
-    # data12h = Get_all_cata_data(cur, symbol, 720)
-    data1min = Get_all_gecko_data(cur, symbol, 1)
-    data3min = Get_all_gecko_data(cur, symbol, 3)
-    data5min = Get_all_gecko_data(cur, symbol, 5)
-    data15min = Get_all_gecko_data(cur, symbol, 15)
-    data30min = Get_all_gecko_data(cur, symbol, 30)
-    data1h = Get_all_gecko_data(cur, symbol, 60)
-    data4h = Get_all_gecko_data(cur, symbol, 240)
-    data6h = Get_all_gecko_data(cur, symbol, 360)
-    data12h = Get_all_gecko_data(cur, symbol, 720)
+    data1min = Get_all_cata_data(cur, symbol, 1)
+    data3min = Get_all_cata_data(cur, symbol, 3)
+    data5min = Get_all_cata_data(cur, symbol, 5)
+    data15min = Get_all_cata_data(cur, symbol, 15)
+    data30min = Get_all_cata_data(cur, symbol, 30)
+    data1h = Get_all_cata_data(cur, symbol, 60)
+    data4h = Get_all_cata_data(cur, symbol, 240)
+    data6h = Get_all_cata_data(cur, symbol, 360)
+    data12h = Get_all_cata_data(cur, symbol, 720)
+
+    # data1min = Get_all_gecko_data(cur, symbol, 1)
+    # data3min = Get_all_gecko_data(cur, symbol, 3)
+    # data5min = Get_all_gecko_data(cur, symbol, 5)
+    # data15min = Get_all_gecko_data(cur, symbol, 15)
+    # data30min = Get_all_gecko_data(cur, symbol, 30)
+    # data1h = Get_all_gecko_data(cur, symbol, 60)
+    # data4h = Get_all_gecko_data(cur, symbol, 240)
+    # data6h = Get_all_gecko_data(cur, symbol, 360)
+    # data12h = Get_all_gecko_data(cur, symbol, 720)
 
     js = {'symbols': [{'symbol': symbol, 'periods': periods, 'exchange': 'binance', 'state': 'watch',
                        'history': len(data1min), 'strategies': []}]}
@@ -125,40 +132,106 @@ if __name__ == '__main__':
         pp = add_column_to_pandas(pp, ret, [type(ret).__name__, per])
 
         ad = Ad(manager)
+        pp = add_column_to_pandas(pp, ad, [type(ad).__name__, per])
+
         nvi = Nvi(manager)
+        pp = add_column_to_pandas(pp, nvi, [type(nvi).__name__, per])
+
         pvi = Pvi(manager)
+        pp = add_column_to_pandas(pp, pvi, [type(pvi).__name__, per])
+
         bop = Bop(manager)
-
-        all_pandas[manager.get_period()] = pp
-
+        pp = add_column_to_pandas(pp, bop, [type(bop).__name__, per])
 
         sma_lookbacks = [10, 30, 50, 100, 200]
         ema_lookbacks = [21, 55, 100, 200, 300]
         rsi_lookbacks = [14, 21, 60]
         stoch_rsi = [(5, 3, 3), (21, 14, 14), (14, 3, 3)]
+        adosc_params = [(2, 5), (3, 5), (3, 10), (5, 14), (14, 21)]
+        aroon_params = [5, 10, 14, 21]
+        atr_params = [5, 10, 14, 21]
+        bollinger_params = [(14, 2), (20, 2), (50, 2), (14, 2.5), (20, 2.5), (50, 2.5), (14, 3), (20, 3), (50, 3)]
+        cvi_params = [5, 10, 20, 50, 100]
+        dpo_params = [5, 10, 20, 50]
+        dx_params = [5, 14, 20, 50, 100, 200]
+        kvo_params = [(2, 5), (3, 10), (5, 14), (14, 21)]
+        lin_reg_slope = [5, 14, 20, 50, 100]
+        mfi_params = [14, 21, 60]
+        vwap_params = [5, 14, 20, 50, 100]
 
+        for i in sma_lookbacks:
+            sma = Sma(i, manager)
+            pp = add_column_to_pandas(pp, sma, [type(sma).__name__, per, i])
 
+        for i in ema_lookbacks:
+            ema = Ema(i, manager)
+            pp = add_column_to_pandas(pp, ema, [type(ema).__name__, per, i])
 
-        # for i in sma_lookbacks:
-        #     sma = Sma(i, manager)
-        #     sma.save_feature()
-        #
-        # for i in ema_lookbacks:
-        #     ema = Ema(i, manager)
-        #     ema.save_feature()
-        #
-        # for i in rsi_lookbacks:
-        #     rsi = Rsi(i, manager)
-        #     rsi.save_feature()
-        #
-        # for i in stoch_rsi:
-        #     stochd = StochRsiD(i[0],i[1],i[2], manager)
-        #     stochh = StochRsiH(i[0],i[1],i[2], manager)
-        #     stochd.save_feature()
-        #     stochh.save_feature()
+        for i in rsi_lookbacks:
+            rsi = Rsi(i, manager)
+            pp = add_column_to_pandas(pp, rsi, [type(rsi).__name__, per, i])
 
+        for i in aroon_params:
+            aroon = Aroonosc(i, manager)
+            pp = add_column_to_pandas(pp, aroon, [type(aroon).__name__, per, i])
 
+        for i in atr_params:
+            atr = Atr(i, manager)
+            pp = add_column_to_pandas(pp, atr, [type(atr).__name__, per, i])
 
+        for i in dpo_params:
+            dpo = Dpo(i, manager)
+            pp = add_column_to_pandas(pp, dpo, [type(dpo).__name__, per, i])
+
+        for i in cvi_params:
+            cvi = Cvi(i, manager)
+            pp = add_column_to_pandas(pp, cvi, [type(cvi).__name__, per, i])
+
+        for i in dx_params:
+            dx = Dx(i, manager)
+            pp = add_column_to_pandas(pp, dx, [type(dx).__name__, per, i])
+
+        for i in lin_reg_slope:
+            llin = LinRegSlope(i, manager)
+            pp = add_column_to_pandas(pp, llin, [type(llin).__name__, per, i])
+
+        for i in mfi_params:
+            mfi = Mfi(i, manager)
+            pp = add_column_to_pandas(pp, mfi, [type(mfi).__name__, per, i])
+
+        for i in vwap_params:
+            vwap = Vwap(i, manager)
+            pp = add_column_to_pandas(pp, vwap, [type(vwap).__name__, per, i])
+
+        for i in adosc_params:
+            adoosc = Adosc(i[0], i[1], manager)
+            pp = add_column_to_pandas(pp, adoosc, [type(adoosc).__name__, per, i[0], i[1]])
+
+        for i in kvo_params:
+            kvo = Kvo(i[0], i[1], manager)
+            pp = add_column_to_pandas(pp, kvo, [type(kvo).__name__, per, i[0], i[1]])
+
+        for i in bollinger_params:
+            bh = BollingerHigh(i[0], i[1], manager)
+            bm = BollingerMiddle(i[0], i[1], manager)
+            bl = BollingerLow(i[0], i[1], manager)
+
+            pp = add_column_to_pandas(pp, bh, [type(bh).__name__, per, i[0], i[1]])
+            pp = add_column_to_pandas(pp, bm, [type(bm).__name__, per, i[0], i[1]])
+            pp = add_column_to_pandas(pp, bl, [type(bl).__name__, per, i[0], i[1]])
+
+        for i in stoch_rsi:
+            stochd = StochRsiD(i[0], i[1], i[2], manager)
+            stochh = StochRsiH(i[0], i[1], i[2], manager)
+            pp = add_column_to_pandas(pp, stochd, [type(stochd).__name__, per, i[0], i[1], i[2]])
+            pp = add_column_to_pandas(pp, stochh, [type(stochh).__name__, per, i[0], i[1], i[2]])
+
+        all_pandas[manager.get_period()] = pp
+
+    for k, v in all_pandas.items():
+        path = 'data_test/features/cata' + k + '.csv'
+        assert isinstance(v, pd.DataFrame)
+        v.to_csv(path, index_label='time')
 
 
 
