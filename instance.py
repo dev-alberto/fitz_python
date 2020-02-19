@@ -1,9 +1,8 @@
-from raw_data_manager import RawDataManager
-from ticker import Ticker
+from data.raw_data_manager import RawDataManager
+from data.ticker import Ticker
 
 import time
 
-from strategy.bollinger.bollinger_strategy import BollingerStrategy
 from strategy.dummy.dummy_strategy import DumbStrategy
 
 
@@ -21,7 +20,6 @@ class Instance:
     
     def set_instance(self, instance):
         self.instance = instance
-
 
     # can be accomplished by a factory class
     def create_tickers_and_raw_data_managers(self):

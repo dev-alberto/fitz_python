@@ -1,5 +1,5 @@
-from raw_data_manager import RawDataManager
-from ticker import Ticker
+from data.raw_data_manager import RawDataManager
+from data.ticker import Ticker
 from strategy.ITrade import TradeAble
 from collections import OrderedDict
 import csv

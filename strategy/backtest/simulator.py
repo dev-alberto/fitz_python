@@ -1,7 +1,7 @@
 import pandas as pd
-from data_retriever import Parse_string_date
+from data.data_retriever import Parse_string_date
 from strategy.backtest.IBacktest import IBacktestAble
-from raw_data_manager import RawDataManager
+from data.raw_data_manager import RawDataManager
 
 import matplotlib.pyplot as plt
 

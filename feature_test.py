@@ -1,24 +1,12 @@
-import numpy as np
-import pandas as pd
-
-from db_connect import Connect
-from rpc.rpc_bridge import RpcBridge
+from data.db_connect import Connect
 from rpc.db_bridge import DbBridge
 from instance import Instance
 
-from raw_data_manager import RawDataManager
+from data.raw_data_manager import RawDataManager
 
 from feature.close import Close
 
-from feature.bollingerhigh import *
-from feature.bollingerlow import *
-from feature.crossbhc import *
-from feature.crosscbl import *
-
-
-from feature.logreturns import LogReturns
-
-from data_retriever import *
+from data.data_retriever import *
 
 
 if __name__ == '__main__':

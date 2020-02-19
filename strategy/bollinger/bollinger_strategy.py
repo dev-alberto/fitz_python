@@ -1,15 +1,12 @@
 from strategy.bollinger.boll1 import BollingerImpl1
 from strategy.bollinger.boll2 import BollingerImpl2
 from strategy.bollinger.boll3 import BollingerImpl3
-from strategy.bollinger.boll4 import BollingerImpl4
-from raw_data_manager import RawDataManager
+from data.raw_data_manager import RawDataManager
 
 from feature.crosscbl import CrossCbl
 from feature.crossbhc import CrossBHc
 from  feature.logreturns import LogReturns
 from feature.crosscbh import CrossCbh
-from feature.crossbmc import CrossBmc
-from feature.crosscbm import CrossCbm
 from  feature.close import Close
 from feature.crossblc import CrossBLc
 

@@ -1,24 +1,12 @@
-from db_connect import Connect
-from rpc.rpc_bridge import RpcBridge
+from data.db_connect import Connect
 from rpc.db_bridge import DbBridge
 from instance import Instance
 
-
-from strategy.bollinger.boll2 import BollingerImpl2
-from strategy.bollinger.bollinger_strategy import BollingerStrategy
-from strategy.bollinger.bollinger_batch import BollingerBatch
-
-from feature.logreturns import LogReturns
-from strategy.returns.returns import Returns0
 from strategy.dummy.dummy_strategy import DumbStrategy
 
 from strategy.backtest.simulator import Simulator
 
-from data_retriever import *
-
-
-from feature.logreturns import LogReturns
-
+from data.data_retriever import *
 
 if __name__ == '__main__':
     

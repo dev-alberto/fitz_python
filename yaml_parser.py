@@ -1,24 +1,52 @@
 import yaml
-from string import Template
-from db_connect import Connect
-from rpc.rpc_bridge import RpcBridge
-from rpc.db_bridge import DbBridge
-from instance import Instance
+import itertools
+from data.factory_raw_data import Get_period_only_managers
 import importlib
+from feature.feature import EmptyFeature
+import pandas as pd
 
 
-from data_retriever import *
+def get_all_dict_combinations(dd):
+    _keys = dd.keys()
+    _values = (dd[key] for key in _keys)
+    return [dict(zip(_keys, combination)) for combination in itertools.product(*_values)]
 
 
-def combine(terms, accum, res=[]):
-    last = (len(terms) == 1)
-    n = len(terms[0])
-    for i in range(n):
-        item = accum + terms[0][i] + "_"
-        if last:
-            res.append(item)
-        else:
-            combine(terms[1:], item, res)
+# given name and property dict, instantiate feature
+def create_feature(name, dictionary):
+    class_ = getattr(importlib.import_module("feature." + name.lower()), name)
+    return class_(**dictionary)
+
+
+def get_all_feature_combinations(feature_name, properties, raw_managers):
+    assert isinstance(raw_managers, dict)
+    all_combs = get_all_dict_combinations(properties)
+    all_features = []
+    feature_representation = {}
+    for comb in all_combs:
+        assert 'raw_data_manager' in comb.keys()
+        assert comb['raw_data_manager'] in raw_managers.keys()
+        representation = feature_name + "_" + '_'.join([str(i) for i in comb.values()])
+
+        comb['raw_data_manager'] = raw_managers[comb['raw_data_manager']]
+        feature_instance = create_feature(feature_name, comb)
+        all_features.append(feature_instance)
+
+        feature_representation[representation] = feature_instance
+
+    return all_features, feature_representation
+
+
+def create_feature_import_string(all_dicts):
+    pass
+
+
+def create_feature_list_string(all_dicts):
+    pass
+
+
+def create_feature_init_string(all_dicts):
+    pass
 
 
 def stringigy_properties(properties):
@@ -29,98 +57,63 @@ def trim_combined_properties(r):
     pass
 
 
-def generate_alphas():
+def generate_alpha_file(alpha_name, features):
+    assert isinstance(features, dict)
+    assert isinstance(alpha_name, str)
+    f = open('alpha_template', 'r')
+    dd = {'featureImport': '', 'featureList': '', 'featureInit': '', 'alphaName': alpha_name}
+    template = f.read()
+    feat_list = [i.lower() for i in features.keys()]
+    feature_list = ', '.join(feat_list)
+    print(feature_list)
+
+    res = template.format(**dd)
+
+
+def generate_csv_files(data_managers_path):
+    all_ff = parse_yaml(data_managers_path)[1]
+    managers = Get_period_only_managers(data_managers_path)
+
+    for time_frame, manager in managers.items():
+        pp = manager.get_backfill_df()
+        assert isinstance(pp, pd.DataFrame)
+        for feature_group in all_ff:
+            assert isinstance(feature_group, dict)
+            for feature_representation, feature_instance in feature_group.items():
+                assert isinstance(feature_representation, str)
+                assert isinstance(feature_instance, EmptyFeature)
+                if time_frame in feature_representation:
+                    pp[feature_representation] = feature_instance.get_TS()
+
+        path = 'data_test/features/' + time_frame + '.csv'
+
+        pp.to_csv(path, index_label='time')
+
+
+# returns yaml data and template strings
+def parse_yaml(data_managers_path):
 
     with open("alpha.yaml", 'r') as stream:
         try:
             data = yaml.safe_load(stream)
-            f = open('alpha_template', 'r')
-            dd = {'featureImport': '', 'featureList': '', 'featureInit': '', 'alphaName': ''}
-            template = f.read()
-            res = template.format(**dd)
-
             yy = {}
+
+            all_features = []
+            # template_strings = []
             for alpha_name, alpha_properties in data.items():
                 features = alpha_properties['Features']
-                all_features = []
+                all_ff_dict = {}
+                # template_string = {'featureImport': '', 'featureList': '', 'featureInit': '', 'alphaName': alpha_name}
                 for feature_name, feature_properties in features.items():
-                    #print(feature_properties)
+                    all_ff_dict[feature_name] = get_all_feature_combinations(feature_name, feature_properties, Get_period_only_managers(data_managers_path))[0]
+                    all_features.append(get_all_feature_combinations(feature_name, feature_properties, Get_period_only_managers(data_managers_path))[1])
+                yy[alpha_name] = all_ff_dict
 
-                    f = [{key: v for key in feature_properties.keys()} for v in feature_properties[key]]
-                    print(f)
-                    break
-                    # for i in range(len(features)):
-                    #     for j in range(len(features[i])):
-                    #         if i < len(features):
-                    #             name += features[i+1][j]
-                    #
-                    # break
+            return yy, all_features
 
         except yaml.YAMLError as exc:
             print(exc)
 
 
 if __name__ == '__main__':
-    generate_alphas()
-    # a = [['ab', 'cd', 'ef'], ['12', '34', '56']]
-    # ss = []
-    # combine(a, '_', res=ss)
-
-    # conn = Connect('data.db')
-    #
-    # cur = conn.cursor()
-    #
-    # symbol = 'BTCUSDT'
-    # periods = ['1m', '5m', '15m', '30m', '1h', '4h']
-    # exchange = 'binance'
-    #
-    # data1min = Get_all_cata_data(cur, symbol, 1)
-    # data5min = Get_all_cata_data(cur, symbol, 5)
-    # data15min = Get_all_cata_data(cur, symbol, 15)
-    # data30min = Get_all_cata_data(cur, symbol, 30)
-    # data1h = Get_all_cata_data(cur, symbol, 60)
-    # data4h = Get_all_cata_data(cur, symbol, 240)
-    #
-    # js = {'symbols': [{'symbol': symbol, 'periods': periods, 'exchange': 'binance', 'state': 'watch',
-    #                    'history': len(data1min), 'strategies': []}]}
-    #
-    # ii = Instance()
-    #
-    # db_bridge = DbBridge(ii)
-    # db_bridge.instantiate(js)
-    #
-    # db_bridge.backfill(exchange, symbol, '1m', data1min)
-    # db_bridge.backfill(exchange, symbol, '5m', data5min)
-    # db_bridge.backfill(exchange, symbol, '15m', data15min)
-    # db_bridge.backfill(exchange, symbol, '30m', data30min)
-    # db_bridge.backfill(exchange, symbol, '1h', data1h)
-    # db_bridge.backfill(exchange, symbol, '4h', data4h)
-    #
-    # raw_data_managers = ii.get_raw_data_managers()
-    #
-    # btc1min = raw_data_managers['binanceBTCUSDT1m']
-    #
-    # btc5min = raw_data_managers['binanceBTCUSDT5m']
-    #
-    # btc15min = raw_data_managers['binanceBTCUSDT15m']
-    #
-    # btc30min = raw_data_managers['binanceBTCUSDT30m']
-    #
-    # btc1h = raw_data_managers['binanceBTCUSDT1h']
-    #
-    # btc4h = raw_data_managers['binanceBTCUSDT4h']
-    #
-    # ff = {'name': 'StochRsiD', 'raw_data_manager': btc1min, 'p1': 10, 'p2': 5, 'p3': 5}
-    #
-    # class_ = getattr(importlib.import_module("feature." + ff['name'].lower()), ff['name'])
-    #
-    # del ff['name']
-    #
-    # ii = class_(**ff)
-    #
-    # ii.save_feature()
-
-    #aal = [{'name':'blabla', 'raw_data_manager':i1, 'p1':i2, 'p2':i3} for i1 in [1,2,3] for i2 in [3,3,3] for i3 in [8,10, 101]]
-    #print(aal)
-
-
+    generate_csv_files('data/store/binanceBTCUSDT.p')

@@ -171,6 +171,9 @@ class EmptyFeature(Sequence):
         per_minutes = self.raw_data_manager.get_period_in_minutes()
         return index - (index//60 % per_minutes) * 60
 
+    def get_period(self):
+        return self.raw_data_manager.get_period()
+
     def __len__(self):
         return len(self.feature)
 
@@ -182,7 +185,7 @@ class EmptyFeature(Sequence):
         return hash(str(self))
 
     def __str__(self):
-        return type(self).__name__ + self.raw_data_manager.get_symbol() + self.raw_data_manager.get_period()
+        return type(self).__name__ + self.raw_data_manager.get_symbol() + self.get_period()
 
     def get_history_start_time(self):
         # return self.feature_df.index[0]
